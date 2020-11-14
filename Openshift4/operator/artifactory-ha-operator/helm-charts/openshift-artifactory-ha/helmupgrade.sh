@@ -14,4 +14,3 @@ helm upgrade --install artifactory-ha . \
                --set artifactory-ha.artifactory.joinKey=$JOIN_KEY \
                --set artifactory-ha.artifactory.masterKey=$MASTER_KEY \
                --set artifactory-ha.databaseUpgradeReady=true
-

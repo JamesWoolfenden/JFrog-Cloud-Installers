@@ -124,7 +124,7 @@ spec:
               cpu: 10m
             limits:
               memory: 50Mi
-              cpu: 50m          
+              cpu: 50m
         - name: vault
           image: "{{ .Values.vault.image.repository }}:{{ .Values.vault.image.tag }}"
           imagePullPolicy: {{ .Values.vault.image.pullPolicy }}

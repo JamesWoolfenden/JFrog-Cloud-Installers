@@ -1,57 +1,64 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-    "db_user": {
+  "outputs": {
+    "databases": {
+      "type": "object",
+      "value": "[parameters('databases')]"
+    },
+    "dbUrl": {
       "type": "string",
-      "defaultValue": "artifactory",
-      "minLength": 1
+      "value": "[parameters('manual_db_url')]"
+    },
+    "jdbcConnString": {
+      "type": "string",
+      "value": "[concat('jdbc:sqlserver://', reference(resourceId('Microsoft.Sql/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':1433')]"
+    }
+  },
+  "parameters": {
+    "databases": {
+      "type": "object"
+    },
+    "db_edition": {
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Basic",
+      "type": "string"
+    },
+    "db_location": {
+      "type": "string"
+    },
+    "db_name": {
+      "defaultValue": "artdb",
+      "minLength": 1,
+      "type": "string"
     },
     "db_password": {
       "type": "securestring"
     },
     "db_server": {
-      "type": "string",
       "defaultValue": "artmssqlsrv",
-      "minLength": 1
-    },
-    "db_name": {
-      "type": "string",
-      "defaultValue": "artdb",
-      "minLength": 1
-    },
-    "db_location": {
+      "minLength": 1,
       "type": "string"
     },
-    "db_edition": {
-      "type": "string",
-      "defaultValue": "Basic",
-      "allowedValues": [
-        "Basic",
-        "Standard",
-        "Premium"
-      ]
-    },
-    "databases": {
-      "type": "object"
+    "db_user": {
+      "defaultValue": "artifactory",
+      "minLength": 1,
+      "type": "string"
     },
     "manual_db_url": {
       "type": "string"
     }
   },
-  "variables": {
-    "rtdbCollation": "Latin1_General_100_CS_AS"
-  },
   "resources": [
     {
-      "name": "[parameters('db_server')]",
-      "type": "Microsoft.Sql/servers",
+      "apiVersion": "2020-02-02-preview",
       "kind": "v12.0",
       "location": "[parameters('db_location')]",
-      "apiVersion": "2020-02-02-preview",
-      "tags": {
-        "displayName": "artifactoryDB"
-      },
+      "name": "[parameters('db_server')]",
       "properties": {
         "administratorLogin": "[parameters('db_user')]",
         "administratorLoginPassword": "[parameters('db_password')]",
@@ -59,51 +66,44 @@
       },
       "resources": [
         {
-          "name": "[uniqueString(parameters('db_server'), 'AllowAllWindowsAzureIps' )]",
-          "type": "firewallrules",
-          "location": "[parameters('db_location')]",
           "apiVersion": "2020-02-02-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers/', parameters('db_server'))]"
           ],
+          "location": "[parameters('db_location')]",
+          "name": "[uniqueString(parameters('db_server'), 'AllowAllWindowsAzureIps' )]",
           "properties": {
-            "startIpAddress": "0.0.0.0",
-            "endIpAddress": "0.0.0.0"
-          }
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          },
+          "type": "firewallrules"
         },
         {
-          "name": "[parameters('db_name')]",
-          "type": "databases",
-          "kind": "v12.0,user",
-          "location": "[parameters('db_location')]",
           "apiVersion": "2020-02-02-preview",
           "dependsOn": [
             "[parameters('db_server')]"
           ],
+          "kind": "v12.0,user",
+          "location": "[parameters('db_location')]",
+          "name": "[parameters('db_name')]",
+          "properties": {
+            "collation": "[variables('rtdbCollation')]",
+            "edition": "[parameters('db_edition')]",
+            "maxSizeBytes": "1073741824"
+          },
           "tags": {
             "displayName": "artifactoryDB"
           },
-          "properties": {
-            "edition": "[parameters('db_edition')]",
-            "maxSizeBytes": "1073741824",
-            "collation": "[variables('rtdbCollation')]"
-          }
+          "type": "databases"
         }
-      ]
+      ],
+      "tags": {
+        "displayName": "artifactoryDB"
+      },
+      "type": "Microsoft.Sql/servers"
     }
   ],
-  "outputs": {
-    "jdbcConnString": {
-      "type": "string",
-      "value": "[concat('jdbc:sqlserver://', reference(resourceId('Microsoft.Sql/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':1433')]"
-    },
-    "dbUrl": {
-      "type": "string",
-      "value": "[parameters('manual_db_url')]"
-    },
-    "databases": {
-      "type": "object",
-      "value": "[parameters('databases')]"
-    }
+  "variables": {
+    "rtdbCollation": "Latin1_General_100_CS_AS"
   }
 }

@@ -10,7 +10,7 @@
         path: /opt/jfrog/artifactory/app
       register: newMethod
     - name: Check artifactory version
-      uri: 
+      uri:
         url: "{{ web_method }}://{{ artifactory_server_url }}:{{ url_port }}/artifactory/api/system/version"
         url_username: "{{ artifactory_app_username }}"
         url_password: "{{ artifactory_app_user_pass }}"
@@ -19,7 +19,7 @@
       debug:
         var: artifactory_installed_version.json.version
     - name: Setup temporary untar home
-      set_fact: 
+      set_fact:
         temp_untar_home: "{{ jfrog_home_directory }}/artifactory-{{ artifactory_flavour }}-{{ artifactory_installed_version }}"
     - name: Rectify legacy installation
       include_tasks: "legacy_migration.yml"
@@ -30,7 +30,7 @@
         name: artifactory
         state: stopped
     - name: Setup temporary untar home (assuming version is set var for version)
-      set_fact: 
+      set_fact:
         temp_untar_home: "{{ jfrog_home_directory }}/artifactory-{{ artifactory_flavour }}-{{ artifactory_version }}"
     - name: Rectify legacy installation
       include_tasks: "legacy_migration.yml"

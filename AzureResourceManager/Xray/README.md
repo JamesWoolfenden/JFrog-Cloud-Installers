@@ -7,8 +7,8 @@ The recommended way of deploying is through the Azure marketplace.
 
 This template can help you setup  [JFrog Xray](https://jfrog.com/xray/) on Azure.
 
-## Prerequisites 
-1. JFrog Xray is an addition to JFrog Artifactory. 
+## Prerequisites
+1. JFrog Xray is an addition to JFrog Artifactory.
     * To be able to use it, you need to have an Artifactory instance deployed in Azure with the appropriate license. If you do not have an Xray compatible license, you can [get a free trial](https://jfrog.com/xray/free-trial/).
 
 2. Deployed Postgresql instance (if "existing DB" is selected as a parameter).
@@ -20,7 +20,7 @@ You can deploy a compatible Postgresql instance using this link:
 <img src="https://aka.ms/deploytoazurebutton"/>
 </a>
 
-In the Databases field, use the object: 
+In the Databases field, use the object:
 
 ```
   {
@@ -37,16 +37,16 @@ In the Databases field, use the object:
 ## Installation
 1. Click "Deploy to Azure" button. If you don't have an Azure subscription, it will guide you on how to signup for a free trial.
 
-2. Fill out the form. Make sure to use the Artifactory Join key, which you can copy from the Artifactory UI, Security -> Settings -> Connection details 
+2. Fill out the form. Make sure to use the Artifactory Join key, which you can copy from the Artifactory UI, Security -> Settings -> Connection details
 
-3. Click Review + Create, then click Create to start the deployment 
+3. Click Review + Create, then click Create to start the deployment
 
 4. Once deployment is done, access Xray thru Artifactory UI, Security & Compliance menu
 
 
 
 
-### Note: 
+### Note:
 1. This template only supports Xray versions 3.2.x and above.
 2. Input values for 'adminUsername' and 'adminPassword' parameters needs to follow azure VM access rules.
 
@@ -62,7 +62,7 @@ Make the file executable:
 
 ```chmod +x upgrade.sh```
 
-Open the file 
+Open the file
 
 ```vi upgrade.sh```
 
@@ -87,5 +87,4 @@ Run the script
 
 The script will upgrade existing 3.x version of Xray to the given version. Check /var/opt/jfrog/xray/console.log to make sure that the service was properly started. Look for the message:
 ```All services started successfully in 10.743 seconds```
-and check the application version in the log. 
-
+and check the application version in the log.

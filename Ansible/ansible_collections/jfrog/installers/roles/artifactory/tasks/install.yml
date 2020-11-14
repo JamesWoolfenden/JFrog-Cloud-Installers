@@ -186,7 +186,7 @@
     group: "{{ artifactory_group }}"
   when: db_local_location is defined
   become: yes
-  
+
 - name: download database driver
   get_url:
     url: "{{ db_download_url }}"

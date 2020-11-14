@@ -1,97 +1,105 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
   "handler": "Microsoft.Azure.CreateUIDef",
-  "version": "0.1.2-preview",
   "parameters": {
     "basics": [],
+    "outputs": {
+      "adminPassword": "[steps('vmCredential').virtualMachine.adminPassword.password]",
+      "adminUsername": "[steps('vmCredential').virtualMachine.adminUsername]",
+      "artifactoryURL": "[steps('xrayConfig').artifactoryURL]",
+      "clusterName": "[steps('xrayConfig').clusterName]",
+      "db_password": "[steps('databaseConfig').db_password]",
+      "db_server": "[steps('databaseConfig').db_server]",
+      "db_type": "[steps('databaseConfig').db_type]",
+      "db_user": "[steps('databaseConfig').db_user]",
+      "joinKey": "[steps('xrayConfig').joinKey]",
+      "location": "[location()]",
+      "manual_db_url": "[steps('databaseConfig').manual_db_url]",
+      "masterKey": "[steps('xrayConfig').masterKey]",
+      "subnetAddressPrefix": "[steps('vmCredential').vnet.subnets.subnet1.addressPrefix]",
+      "subnetName": "[steps('vmCredential').vnet.subnets.subnet1.name]",
+      "virtualMachineSize": "[steps('vmCredential').vmSku]",
+      "virtualNetworkAddressPrefix": "[first(steps('vmCredential').vnet.addressPrefixes)]",
+      "virtualNetworkName": "[steps('vmCredential').vnet.name]",
+      "virtualNetworkNewOrExisting": "[steps('vmCredential').vnet.newOrExisting]",
+      "virtualNetworkResourceGroup": "[steps('vmCredential').vnet.resourceGroup]",
+      "xrayVersion": "[steps('xrayConfig').xrayVersion]"
+    },
     "steps": [
       {
-        "name": "vmCredential",
-        "label": "VM Credential",
         "bladeTitle": "VM Credential",
-        "subLabel": {
-          "preValidation": "Provide VM credentials",
-          "postValidation": "Great - let's move on!"
-        },
         "elements": [
           {
-            "name": "virtualMachine",
-            "type": "Microsoft.Common.Section",
             "elements": [
               {
-                "name": "adminUsername",
-                "type": "Microsoft.Compute.UserNameTextBox",
-                "label": "Admin username",
-                "osPlatform": "Linux",
                 "constraints": {
-                  "required": true,
                   "regex": "^[a-z0-9A-Z]{1,30}$",
+                  "required": true,
                   "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
                 },
-                "toolTip": "Provide admin username for the virtual machine"
+                "label": "Admin username",
+                "name": "adminUsername",
+                "osPlatform": "Linux",
+                "toolTip": "Provide admin username for the virtual machine",
+                "type": "Microsoft.Compute.UserNameTextBox"
               },
               {
-                "name": "adminPassword",
-                "type": "Microsoft.Compute.CredentialsCombo",
-                "label": {
-                  "password": "Password",
-                  "confirmPassword": "Confirm password"
-                },
-                "osPlatform": "Linux",
                 "constraints": {
-                  "required": true,
                   "customPasswordRegex": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{12,}$",
-                  "customValidationMessage": "The password must contain at least 12 characters, with at least 1 uppercase letter, 1 lowercase letter and 1 number."
+                  "customValidationMessage": "The password must contain at least 12 characters, with at least 1 uppercase letter, 1 lowercase letter and 1 number.",
+                  "required": true
                 },
+                "label": {
+                  "confirmPassword": "Confirm password",
+                  "password": "Password"
+                },
+                "name": "adminPassword",
                 "options": {
                   "hideConfirmation": false
                 },
+                "osPlatform": "Linux",
                 "toolTip": {
                   "password": "Provide admin password for the virtual machine"
                 },
+                "type": "Microsoft.Compute.CredentialsCombo",
                 "visible": true
               }
             ],
+            "name": "virtualMachine",
+            "type": "Microsoft.Common.Section",
             "visible": true
           },
           {
-            "name": "vnet",
-            "type": "Microsoft.Network.VirtualNetworkCombo",
-            "toolTip": "Provide Virtual Network information",
-            "label": {
-              "virtualNetwork": "Virtual Network",
-              "subnets": "Subnets"
-            },
-            "defaultValue": {
-              "name": "vmx-vnet",
-              "addressPrefixSize": "/16"
-            },
             "constraints": {
               "minAddressPrefixSize": "/24"
             },
+            "defaultValue": {
+              "addressPrefixSize": "/16",
+              "name": "vmx-vnet"
+            },
+            "label": {
+              "subnets": "Subnets",
+              "virtualNetwork": "Virtual Network"
+            },
+            "name": "vnet",
             "subnets": {
               "subnet1": {
-                "label": "Subnet",
-                "defaultValue": {
-                  "name": "vmx-subnet",
-                  "addressPrefixSize": "/24"
-                },
                 "constraints": {
-                  "minAddressPrefixSize": "/29",
                   "minAddressCount": 8,
+                  "minAddressPrefixSize": "/29",
                   "requireContiguousAddresses": true
-                }
+                },
+                "defaultValue": {
+                  "addressPrefixSize": "/24",
+                  "name": "vmx-subnet"
+                },
+                "label": "Subnet"
               }
-            }
+            },
+            "toolTip": "Provide Virtual Network information",
+            "type": "Microsoft.Network.VirtualNetworkCombo"
           },
           {
-            "name": "vmSku",
-            "type": "Microsoft.Compute.SizeSelector",
-            "label": "Virtual machine size",
-            "toolTip": "The size of the virtual machine for Xray",
-            "recommendedSizes": [
-              "Standard_D4s_v3"
-            ],
             "constraints": {
               "allowedSizes": [
                 "Standard_A4_v2",
@@ -105,26 +113,28 @@
                 "Standard_DC4s"
               ]
             },
+            "count": 1,
+            "label": "Virtual machine size",
+            "name": "vmSku",
             "osPlatform": "Linux",
-            "count": 1
+            "recommendedSizes": [
+              "Standard_D4s_v3"
+            ],
+            "toolTip": "The size of the virtual machine for Xray",
+            "type": "Microsoft.Compute.SizeSelector"
           }
-        ]
+        ],
+        "label": "VM Credential",
+        "name": "vmCredential",
+        "subLabel": {
+          "postValidation": "Great - let's move on!",
+          "preValidation": "Provide VM credentials"
+        }
       },
       {
-        "name": "xrayConfig",
-        "label": "Xray settings",
-        "subLabel": {
-          "preValidation": "Configure Xray Deployment",
-          "postValidation": "Done!"
-        },
         "bladeTitle": "Xray Settings",
         "elements": [
           {
-            "name": "xrayVersion",
-            "type": "Microsoft.Common.DropDown",
-            "label": "Xray-vm image version to deploy.",
-            "defaultValue": "3.9.1",
-            "toolTip": "Version of Xray to deploy",
             "constraints": {
               "allowedValues": [
                 {
@@ -146,93 +156,93 @@
               ],
               "required": true
             },
+            "defaultValue": "3.9.1",
+            "label": "Xray-vm image version to deploy.",
+            "name": "xrayVersion",
+            "toolTip": "Version of Xray to deploy",
+            "type": "Microsoft.Common.DropDown",
             "visible": true
           },
           {
-            "name": "clusterName",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Cluster name",
-            "toolTip": "Cluster name",
-            "defaultValue": "",
             "constraints": {
-              "required": true,
               "regex": "^[a-z0-9A-Z]{1,30}$",
+              "required": true,
               "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
-            }
+            },
+            "defaultValue": "",
+            "label": "Cluster name",
+            "name": "clusterName",
+            "toolTip": "Cluster name",
+            "type": "Microsoft.Common.TextBox"
           },
           {
-            "name": "masterKey",
-            "type": "Microsoft.Common.PasswordBox",
+            "constraints": {
+              "regex": "^[a-z0-9A-Z]{12,32}$",
+              "required": true,
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-32 characters long."
+            },
             "label": {
-              "password": "Xray master Key",
-              "confirmPassword": "Confirm master Key"
+              "confirmPassword": "Confirm master Key",
+              "password": "Xray master Key"
+            },
+            "name": "masterKey",
+            "options": {
+              "hideConfirmation": true
             },
             "toolTip": "Master key for Xray instance. Generate master.key using command '$openssl rand -hex 16'",
-            "constraints": {
-              "required": true,
-              "regex": "^[a-z0-9A-Z]{12,32}$",
-              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-32 characters long."
-            },
-            "options": {
-              "hideConfirmation": true
-            }
+            "type": "Microsoft.Common.PasswordBox"
           },
           {
-            "name": "joinKey",
-            "type": "Microsoft.Common.PasswordBox",
+            "constraints": {
+              "regex": "^[a-z0-9A-Z]{12,32}$",
+              "required": true,
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-32 characters long."
+            },
             "label": {
-              "password": "Artifactory join Key",
-              "confirmPassword": "Confirm join Key"
+              "confirmPassword": "Confirm join Key",
+              "password": "Artifactory join Key"
+            },
+            "name": "joinKey",
+            "options": {
+              "hideConfirmation": true
             },
             "toolTip": "Join key from Artifactory cluster. You can copy Join key from the Artifactory UI, Security -> Settings -> Connection details",
-            "constraints": {
-              "required": true,
-              "regex": "^[a-z0-9A-Z]{12,32}$",
-              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-32 characters long."
-            },
-            "options": {
-              "hideConfirmation": true
-            }
+            "type": "Microsoft.Common.PasswordBox"
           },
           {
-            "name": "artifactoryURL",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Provide artifactory URL to connect Xray instance",
-            "defaultValue": "https://myorgartifactory.com",
-            "toolTip": "Provide Artifactory URL",
             "constraints": {
-              "required": true,
               "regex": "^(https?)://[^\\s/$.?#].[^\\s]*$",
+              "required": true,
               "validationMessage": "URL is not valid"
-            }
+            },
+            "defaultValue": "https://myorgartifactory.com",
+            "label": "Provide artifactory URL to connect Xray instance",
+            "name": "artifactoryURL",
+            "toolTip": "Provide Artifactory URL",
+            "type": "Microsoft.Common.TextBox"
           }
-        ]
+        ],
+        "label": "Xray settings",
+        "name": "xrayConfig",
+        "subLabel": {
+          "postValidation": "Done!",
+          "preValidation": "Configure Xray Deployment"
+        }
       },
       {
-        "name": "databaseConfig",
-        "label": "Database Configuration",
-        "subLabel": {
-          "preValidation": "Configure the Database",
-          "postValidation": "Done"
-        },
         "bladeTitle": "Database Credential",
         "elements": [
           {
             "name": "infoMessage",
-            "type": "Microsoft.Common.InfoBox",
-            "visible": true,
             "options": {
               "icon": "Info",
               "text": "You can deploy a new Postgresql server or use your existing Postgres server and database. Please make sure Postgresql instance is set up correctly before Xray deployment. Check README.md https://github.com/jfrog/JFrog-Cloud-Installers/blob/arm-xray/AzureResourceManager/Xray/README.md#postgresql-deployment. You can use Postgresql template from here https://github.com/jfrog/JFrog-Cloud-Installers/tree/arm-xray/AzureResourceManager/Postgresql"
-            }
+            },
+            "type": "Microsoft.Common.InfoBox",
+            "visible": true
           },
           {
-            "name": "db_type",
-            "type": "Microsoft.Common.DropDown",
-            "label": "Database options",
-            "toolTip": "Deploy a new DB instance or use an existing DB",
             "constraints": {
-              "required": true,
               "allowedValues": [
                 {
                   "label": "Deploy a new Postgresql instance",
@@ -242,86 +252,76 @@
                   "label": "Use existing Postgresql instance",
                   "value": "Postgresql_existing.json"
                 }
-              ]
+              ],
+              "required": true
             },
+            "label": "Database options",
+            "name": "db_type",
+            "toolTip": "Deploy a new DB instance or use an existing DB",
+            "type": "Microsoft.Common.DropDown",
             "visible": true
           },
           {
-            "name": "db_server",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Database server name. Skip if a new deployment is selected",
-            "toolTip": "Database server name",
             "constraints": {
-              "required": false,
               "regex": "^[a-z0-9A-Z]{1,15}$",
-              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-15 characters long."
-            }
-          },
-          {
-            "name": "manual_db_url",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Database connection string. Skip if a new deployment is selected",
-            "toolTip": "Jdbc connection string for MSSQL or Postgresql",
-            "constraints": {
               "required": false,
-              "regex": "..*",
-              "validationMessage": "DB connection string is not valid"
-            }
-          },
-          {
-            "name": "db_user",
-            "type": "Microsoft.Compute.UserNameTextBox",
-            "label": "User name",
-            "toolTip": "Admin username for the database",
-            "osPlatform": "Linux",
-            "constraints": {
-              "required": true,
-              "regex": "^[a-z0-9A-Z]{1,30}$",
-              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
-            }
-          },
-          {
-            "name": "db_password",
-            "type": "Microsoft.Common.PasswordBox",
-            "label": {
-              "password": "Password",
-              "confirmPassword": "Confirm password"
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-15 characters long."
             },
-            "toolTip": "Admin password for the database",
+            "label": "Database server name. Skip if a new deployment is selected",
+            "name": "db_server",
+            "toolTip": "Database server name",
+            "type": "Microsoft.Common.TextBox"
+          },
+          {
             "constraints": {
+              "regex": "..*",
+              "required": false,
+              "validationMessage": "DB connection string is not valid"
+            },
+            "label": "Database connection string. Skip if a new deployment is selected",
+            "name": "manual_db_url",
+            "toolTip": "Jdbc connection string for MSSQL or Postgresql",
+            "type": "Microsoft.Common.TextBox"
+          },
+          {
+            "constraints": {
+              "regex": "^[a-z0-9A-Z]{1,30}$",
               "required": true,
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+            },
+            "label": "User name",
+            "name": "db_user",
+            "osPlatform": "Linux",
+            "toolTip": "Admin username for the database",
+            "type": "Microsoft.Compute.UserNameTextBox"
+          },
+          {
+            "constraints": {
               "regex": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{12,}$",
+              "required": true,
               "validationMessage": "The password must contain at least 12 characters, with at least 1 uppercase letter, 1 lowercase letter and 1 number."
             },
+            "label": {
+              "confirmPassword": "Confirm password",
+              "password": "Password"
+            },
+            "name": "db_password",
             "options": {
               "hideConfirmation": false
             },
+            "toolTip": "Admin password for the database",
+            "type": "Microsoft.Common.PasswordBox",
             "visible": true
           }
-        ]
+        ],
+        "label": "Database Configuration",
+        "name": "databaseConfig",
+        "subLabel": {
+          "postValidation": "Done",
+          "preValidation": "Configure the Database"
+        }
       }
-    ],
-    "outputs": {
-      "location": "[location()]",
-      "adminUsername": "[steps('vmCredential').virtualMachine.adminUsername]",
-      "adminPassword": "[steps('vmCredential').virtualMachine.adminPassword.password]",
-      "virtualNetworkName": "[steps('vmCredential').vnet.name]",
-      "virtualNetworkNewOrExisting": "[steps('vmCredential').vnet.newOrExisting]",
-      "virtualNetworkAddressPrefix": "[first(steps('vmCredential').vnet.addressPrefixes)]",
-      "virtualNetworkResourceGroup": "[steps('vmCredential').vnet.resourceGroup]",
-      "virtualMachineSize": "[steps('vmCredential').vmSku]",
-      "subnetName": "[steps('vmCredential').vnet.subnets.subnet1.name]",
-      "subnetAddressPrefix": "[steps('vmCredential').vnet.subnets.subnet1.addressPrefix]",
-      "xrayVersion": "[steps('xrayConfig').xrayVersion]",
-      "clusterName": "[steps('xrayConfig').clusterName]",
-      "artifactoryURL": "[steps('xrayConfig').artifactoryURL]",
-      "masterKey": "[steps('xrayConfig').masterKey]",
-      "joinKey": "[steps('xrayConfig').joinKey]",
-      "db_type": "[steps('databaseConfig').db_type]",
-      "db_server": "[steps('databaseConfig').db_server]",
-      "manual_db_url": "[steps('databaseConfig').manual_db_url]",
-      "db_user": "[steps('databaseConfig').db_user]",
-      "db_password": "[steps('databaseConfig').db_password]"
-    }
-  }
+    ]
+  },
+  "version": "0.1.2-preview"
 }

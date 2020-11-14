@@ -31,7 +31,7 @@ Or run it locally using CodeReadyContainers.
 
 Note if you are going to use CodeReadyContainers to test this Operator you will need to ensure:
 
-``` 
+```
  - create at least one Persistent volume of 200Gi per Artifactory node used in HA configuration
 ```
 
@@ -56,7 +56,7 @@ Where anyuid is the Security context constraint being applied to the service acc
 
 In addition to this the restricted scc policy will need to be changed to allow anyuid:
 
-``` 
+```
 oc patch scc restricted --patch '{"fsGroup":{"type":"RunAsAny"},"runAsUser":{"type":"RunAsAny"},"seLinuxContext":{"type":"RunAsAny"}}' --type=merge
 ```
 
@@ -68,7 +68,7 @@ oc patch scc privileged --patch  '{"users":["system:admin","system:serviceaccoun
 
 ###### Persistent Volumes on Code Ready Containers
 
-Artifactory HA nodes by default request persistent volume claims 200 Gbs in size. 
+Artifactory HA nodes by default request persistent volume claims 200 Gbs in size.
 
 If your cluster does not already have existing persistent volumes that are 200Gi you will need to create new persistent volumes that are large enough to bound the claims to.
 
@@ -117,7 +117,7 @@ Recommended settings:
 crc start -c 4 -m 16384
 ```
 
-Create file: 
+Create file:
 
 ```
 JFrog-Cloud-Installers/Openshift4/artifactory.cluster.license
@@ -127,7 +127,7 @@ Paste your license keys into this file for HA configuration of multiple nodes.
 
 * License keys must be separated by two new lines.
 
-Run: 
+Run:
 
 ```
 JFrog-Cloud-Installers/Openshift4/artifactory-ha-operator/setup.sh
@@ -135,7 +135,7 @@ JFrog-Cloud-Installers/Openshift4/artifactory-ha-operator/setup.sh
 
 ###### Operator-sdk local
 
-Run: 
+Run:
 
 ```
 cd JFrog-Cloud-Installers/Openshift4/artifactory-ha-operator

@@ -6,12 +6,12 @@ The Xray chart has been made a subchart of this chart.
 Note due to this change we now reference values through the subchart name as shown below:
 
 original:
-``` 
+```
 xray.jfrogUrl
 ```
 
 now:
-``` 
+```
 xray.xray.jfrogUrl
 ```
 
@@ -55,7 +55,7 @@ helm repo add jfrog https://charts.jfrog.io
 
 In order to connect Xray to your Artifactory installation, you have to use a Join Key, hence it is *MANDATORY* to provide a Join Key and Jfrog Url to your Xray installation. Here's how you do that:
 
-Retrieve the connection details of your Artifactory installation, from the UI - https://www.jfrog.com/confluence/display/JFROG/General+Security+Settings#GeneralSecuritySettings-ViewingtheJoinKey. 
+Retrieve the connection details of your Artifactory installation, from the UI - https://www.jfrog.com/confluence/display/JFROG/General+Security+Settings#GeneralSecuritySettings-ViewingtheJoinKey.
 
 #### Initiate Installation
 
@@ -240,7 +240,7 @@ kubectl create secret generic postgres-tls --from-file=client-key.pem --from-fil
 
 ```
 
-**IMPORTANT:** `PostgreSQL` connection URL needs to have listed TLS files with the path `/var/opt/jfrog/xray/data/tls/` 
+**IMPORTANT:** `PostgreSQL` connection URL needs to have listed TLS files with the path `/var/opt/jfrog/xray/data/tls/`
 and `sslmode==verify-ca` otherwise Xray will fail to connect to Postgres.
 
 ```bash

@@ -2,47 +2,23 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "clusterName": {
+    "adminPassword": {
       "value": "GEN-UNIQUE"
     },
     "adminUsername": {
       "value": "GEN-UNIQUE"
     },
-    "adminPassword": {
-      "value": "GEN-UNIQUE"
-    },
-    "virtualNetworkName": {
-      "value": "existing-vm-network-name"
-    },
-    "subnetName": {
-      "value": "existing-subnet-name"
-    },
-    "virtualNetworkNewOrExisting": {
-      "value": "existing"
-    },
-    "virtualNetworkAddressPrefix": {
-      "value": "10.0.0.0/16"
-    },
-    "virtualNetworkResourceGroup": {
-      "value": "resource-group-name"
-    },
-    "virtualMachineSize": {
-      "value": "Standard_D4s_v3"
-    },
-    "subnetAddressPrefix": {
-      "value": "10.0.1.0/24"
-    },
-    "xrayVersion": {
-      "value": "0.0.6"
-    },
     "artifactoryURL": {
       "value": "http://artifactory-url.cloudapp.azure.com"
     },
-    "masterKey": {
+    "clusterName": {
       "value": "GEN-UNIQUE"
     },
-    "joinKey": {
+    "db_password": {
       "value": "GEN-UNIQUE"
+    },
+    "db_server": {
+      "value": "postgressrvr"
     },
     "db_type": {
       "value": "Postgresql_existing.json"
@@ -50,14 +26,38 @@
     "db_user": {
       "value": "GEN-UNIQUE"
     },
-    "db_password": {
+    "joinKey": {
       "value": "GEN-UNIQUE"
     },
     "manual_db_url": {
       "value": "jdbc:postgresql://postgressrvr.postgres.database.azure.com:5432"
     },
-    "db_server": {
-      "value": "postgressrvr"
+    "masterKey": {
+      "value": "GEN-UNIQUE"
+    },
+    "subnetAddressPrefix": {
+      "value": "10.0.1.0/24"
+    },
+    "subnetName": {
+      "value": "existing-subnet-name"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_D4s_v3"
+    },
+    "virtualNetworkAddressPrefix": {
+      "value": "10.0.0.0/16"
+    },
+    "virtualNetworkName": {
+      "value": "existing-vm-network-name"
+    },
+    "virtualNetworkNewOrExisting": {
+      "value": "existing"
+    },
+    "virtualNetworkResourceGroup": {
+      "value": "resource-group-name"
+    },
+    "xrayVersion": {
+      "value": "0.0.6"
     }
   }
 }

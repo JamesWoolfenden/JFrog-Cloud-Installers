@@ -24,18 +24,18 @@ This template can help you setup the [Artifactory Enterprise](https://jfrog.com/
 
 4. Once deployment is done. Copy FQDN from Output of deployment template.
 
-5. Access artifactory using FQDN. 
+5. Access artifactory using FQDN.
 
 6. You will see specified artifactory member nodes in 'Admin ->  High Availability' page.
 
-### Note: 
+### Note:
 1. This template only supports Artifactory version 6.18.x and above.
 2. Turn off daily backups. Read Documentation provided [here](https://www.jfrog.com/confluence/display/RTF/Managing+Backups)
 3. Use SSL Certificate with valid wild card to you artifactory as docker registry with subdomain method.
 4. Input values for 'adminUsername' and 'adminPassword' parameters needs to follow azure VM access rules.
 5. One primary node is configured automatically. And, Minimum 1 member node is expected for the Artifactory HA installation.
 6. This template provides support for max 5 licenses. To add more licenses, Edit the template (input fields, CustomScript sections) and install_artifactory.sh script.
-7. Refer to [System Requirements](https://www.jfrog.com/confluence/display/RTF/System+Requirements) for changing 'extraJavaOptions' input parameter value. 
+7. Refer to [System Requirements](https://www.jfrog.com/confluence/display/RTF/System+Requirements) for changing 'extraJavaOptions' input parameter value.
 
 ### Steps to setup Artifactory as secure docker registry
 considering you have SSL certificate for `*.jfrog.team`
@@ -50,7 +50,7 @@ considering you have SSL certificate for `*.jfrog.team`
 
 ### Steps to upgrade Artifactory Version
 
-1. Login into first member VM instance and sudo as root. Use the admin credentials provided in the install setup.  
+1. Login into first member VM instance and sudo as root. Use the admin credentials provided in the install setup.
 Note: Use load balancer's NAT entries under Azure resources, to get the allocated NAT port for accessing the VM instance.
 
 2. Stop nginx and artifactory services.
@@ -68,13 +68,10 @@ Note: Use load balancer's NAT entries under Azure resources, to get the allocate
     service artifactory start
     ```
 5. Repeat above steps for all member nodes then for primary node.
-6. To check the version of each node, open Administration -> Monitoring -> Service status 
+6. To check the version of each node, open Administration -> Monitoring -> Service status
 
 ------
 #### Note:
-Supported locations: `East US 2`, `Central US`, `West Central US` and `West Europe`.  
-Please check the Azure region support for `Standard Sku` property in load balancer for this template to work properly.  
-Check for SQL server support on specified location. If SQL server is not available in the location, Use 'DB_Location' to specify the location with SQL server support.  
-
-
- 
+Supported locations: `East US 2`, `Central US`, `West Central US` and `West Europe`.
+Please check the Azure region support for `Standard Sku` property in load balancer for this template to work properly.
+Check for SQL server support on specified location. If SQL server is not available in the location, Use 'DB_Location' to specify the location with SQL server support.

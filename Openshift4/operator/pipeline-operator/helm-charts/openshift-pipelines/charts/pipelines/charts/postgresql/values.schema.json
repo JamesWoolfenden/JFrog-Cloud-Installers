@@ -1,103 +1,103 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "type": "object",
   "properties": {
-    "postgresqlUsername": {
-      "type": "string",
-      "title": "Admin user",
-      "form": true
-    },
-    "postgresqlPassword": {
-      "type": "string",
-      "title": "Password",
-      "form": true
-    },
-    "persistence": {
-      "type": "object",
-      "properties": {
-        "size": {
-          "type": "string",
-          "title": "Persistent Volume Size",
-          "form": true,
-          "render": "slider",
-          "sliderMin": 1,
-          "sliderMax": 100,
-          "sliderUnit": "Gi"
-        }
-      }
-    },
-    "resources": {
-      "type": "object",
-      "title": "Required Resources",
-      "description": "Configure resource requests",
-      "form": true,
-      "properties": {
-        "requests": {
-          "type": "object",
-          "properties": {
-            "memory": {
-              "type": "string",
-              "form": true,
-              "render": "slider",
-              "title": "Memory Request",
-              "sliderMin": 10,
-              "sliderMax": 2048,
-              "sliderUnit": "Mi"
-            },
-            "cpu": {
-              "type": "string",
-              "form": true,
-              "render": "slider",
-              "title": "CPU Request",
-              "sliderMin": 10,
-              "sliderMax": 2000,
-              "sliderUnit": "m"
-            }
-          }
-        }
-      }
-    },
-    "replication": {
-      "type": "object",
-      "form": true,
-      "title": "Replication Details",
+    "metrics": {
       "properties": {
         "enabled": {
-          "type": "boolean",
+          "form": true,
+          "title": "Configure metrics exporter",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "persistence": {
+      "properties": {
+        "size": {
+          "form": true,
+          "render": "slider",
+          "sliderMax": 100,
+          "sliderMin": 1,
+          "sliderUnit": "Gi",
+          "title": "Persistent Volume Size",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "postgresqlPassword": {
+      "form": true,
+      "title": "Password",
+      "type": "string"
+    },
+    "postgresqlUsername": {
+      "form": true,
+      "title": "Admin user",
+      "type": "string"
+    },
+    "replication": {
+      "form": true,
+      "properties": {
+        "enabled": {
+          "form": true,
           "title": "Enable Replication",
-          "form": true
+          "type": "boolean"
         },
         "slaveReplicas": {
-          "type": "integer",
-          "title": "Slave Replicas",
           "form": true,
           "hidden": {
             "condition": false,
             "value": "replication.enabled"
-          }
+          },
+          "title": "Slave Replicas",
+          "type": "integer"
         }
-      }
+      },
+      "title": "Replication Details",
+      "type": "object"
+    },
+    "resources": {
+      "description": "Configure resource requests",
+      "form": true,
+      "properties": {
+        "requests": {
+          "properties": {
+            "cpu": {
+              "form": true,
+              "render": "slider",
+              "sliderMax": 2000,
+              "sliderMin": 10,
+              "sliderUnit": "m",
+              "title": "CPU Request",
+              "type": "string"
+            },
+            "memory": {
+              "form": true,
+              "render": "slider",
+              "sliderMax": 2048,
+              "sliderMin": 10,
+              "sliderUnit": "Mi",
+              "title": "Memory Request",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "title": "Required Resources",
+      "type": "object"
     },
     "volumePermissions": {
-      "type": "object",
       "properties": {
         "enabled": {
-          "type": "boolean",
+          "description": "Change the owner of the persist volume mountpoint to RunAsUser:fsGroup",
           "form": true,
           "title": "Enable Init Containers",
-          "description": "Change the owner of the persist volume mountpoint to RunAsUser:fsGroup"
+          "type": "boolean"
         }
-      }
-    },
-    "metrics": {
-      "type": "object",
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "title": "Configure metrics exporter",
-          "form": true
-        }
-      }
+      },
+      "type": "object"
     }
-  }
+  },
+  "type": "object"
 }

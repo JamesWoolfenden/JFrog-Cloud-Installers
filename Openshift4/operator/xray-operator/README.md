@@ -41,7 +41,7 @@ Where anyuid is the Security context constraint being applied to the service acc
 
 In addition to this the restricted scc policy will need to be changed to allow anyuid:
 
-``` 
+```
 oc patch scc restricted --patch '{"fsGroup":{"type":"RunAsAny"},"runAsUser":{"type":"RunAsAny"},"seLinuxContext":{"type":"RunAsAny"}}' --type=merge
 ```
 
@@ -72,7 +72,7 @@ This will deploy the operator into the cluster.
 
 ###### Operator-sdk local
 
-Run: 
+Run:
 
 ```
 cd JFrog-Cloud-Installers/Openshift4/xray-operator

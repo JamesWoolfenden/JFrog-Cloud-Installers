@@ -13,7 +13,7 @@ metadata:
     {{- end }}
 {{- end }}
 spec:
-  type: LoadBalancer 
+  type: LoadBalancer
   loadBalancerIP: {{ .Values.rabbitmq.serviceVmLb.loadBalancerIP }}
 {{- if (.Values.rabbitmq.serviceVmLb.loadBalancerSourceRanges) }}
   loadBalancerSourceRanges:

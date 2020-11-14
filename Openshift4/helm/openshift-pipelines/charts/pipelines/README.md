@@ -64,7 +64,7 @@ Fetch the JFrog Pipelines helm chart to get the needed configuration files
 helm fetch center/jfrog/pipelines --untar
 ```
 
-Edit local copies of `values-ingress.yaml`, `values-ingress-passwords.yaml` and `values-ingress-external-secret.yaml` with the needed configuration values 
+Edit local copies of `values-ingress.yaml`, `values-ingress-passwords.yaml` and `values-ingress-external-secret.yaml` with the needed configuration values
 
 - URLs in `values-ingress.yaml`
   - Artifactory URL
@@ -145,7 +145,7 @@ rabbitmq:
   cp_username: admin
   cp_password: password
   build_username: admin
-  build_password: password    
+  build_password: password
   root_vhost_exchange_name: rootvhost
   erlang_cookie: secretcookie
   build_vhost_name: pipelines
@@ -164,7 +164,7 @@ https://www.vaultproject.io/docs/configuration#disable_mlock
 
 For non-prod environments it is acceptable to leave this value set to true.
 
-Note however this does enable a potential security issue where encrypted credentials could potentially be swapped onto an unencrypted disk. 
+Note however this does enable a potential security issue where encrypted credentials could potentially be swapped onto an unencrypted disk.
 
 For this reason we recommend you always set this value to false to ensure mlock is enabled.
 

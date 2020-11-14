@@ -131,19 +131,19 @@ spec:
                       </provider>
                   </provider>
               </chain>
-  
+
               <provider id="cache-fs" type="cache-fs">
                   <maxCacheSize>{{ .Values.artifactory.persistence.maxCacheSize }}</maxCacheSize>
                   <cacheProviderDir>{{ .Values.artifactory.persistence.cacheProviderDir }}</cacheProviderDir>
               </provider>
-  
+
               // Specify the read and write strategy and redundancy for the sharding binary provider
               <provider id="sharding" type="sharding">
                   <readBehavior>roundRobin</readBehavior>
                   <writeBehavior>percentageFreeSpace</writeBehavior>
                   <redundancy>2</redundancy>
               </provider>
-  
+
               {{- range $sharedClaimNumber, $e := until (.Values.artifactory.persistence.fileSystem.existingSharedClaim.numberOfExistingClaims|int) -}}
               //For each sub-provider (mount), specify the filestore location
               <provider id="shard{{ $sharedClaimNumber }}" type="state-aware">
@@ -167,18 +167,18 @@ spec:
                       </provider>
                   </provider>
               </chain>
-  
+
               <provider id="cache-fs" type="cache-fs">
                   <maxCacheSize>{{ .Values.artifactory.persistence.maxCacheSize }}</maxCacheSize>
                   <cacheProviderDir>{{ .Values.artifactory.persistence.cacheProviderDir }}</cacheProviderDir>
               </provider>
-  
+
               <!-- Shards add local file-system provider configuration -->
               <provider id="state-aware" type="state-aware">
                   <fileStoreDir>shard-fs-1</fileStoreDir>
                   <zone>local</zone>
               </provider>
-  
+
               <!-- Shards dynamic remote provider configuration -->
               <provider id="remote" type="remote">
                   <checkPeriod>30</checkPeriod>
@@ -210,28 +210,28 @@ spec:
                       </provider>
                   </provider>
               </chain>
-  
+
               <!-- Set max cache-fs size -->
               <provider id="cache-fs" type="cache-fs">
                   <maxCacheSize>{{ .Values.artifactory.persistence.maxCacheSize }}</maxCacheSize>
                   <cacheProviderDir>{{ .Values.artifactory.persistence.cacheProviderDir }}</cacheProviderDir>
               </provider>
-  
+
               <provider id="eventual-cluster" type="eventual-cluster">
                   <zone>local</zone>
               </provider>
-  
+
               <provider id="remote" type="remote">
                   <checkPeriod>30</checkPeriod>
                   <timeout>10000</timeout>
                   <zone>remote</zone>
               </provider>
-  
+
               <provider id="file-system" type="file-system">
                   <fileStoreDir>{{ .Values.artifactory.persistence.mountPath }}/data/filestore</fileStoreDir>
                   <tempDir>/tmp</tempDir>
               </provider>
-  
+
               <provider id="google-storage" type="google-storage">
                   <providerId>google-cloud-storage</providerId>
                   <endpoint>{{ .Values.artifactory.persistence.googleStorage.endpoint }}</endpoint>
@@ -259,28 +259,28 @@ spec:
                       </provider>
                   </provider>
               </chain>
-  
+
               <provider id="sharding-cluster-eventual-s3" type="sharding-cluster">
                   <readBehavior>crossNetworkStrategy</readBehavior>
                   <writeBehavior>crossNetworkStrategy</writeBehavior>
                   <redundancy>{{ .Values.artifactory.persistence.redundancy }}</redundancy>
                   <property name="zones" value="local,remote"/>
               </provider>
-  
+
               <provider id="remote-s3" type="remote">
                   <zone>remote</zone>
               </provider>
-  
+
               <provider id="eventual-cluster-s3" type="eventual-cluster">
                   <zone>local</zone>
               </provider>
-  
+
               <!-- Set max cache-fs size -->
               <provider id="cache-fs-eventual-s3" type="cache-fs">
                   <maxCacheSize>{{ .Values.artifactory.persistence.maxCacheSize }}</maxCacheSize>
                   <cacheProviderDir>{{ .Values.artifactory.persistence.cacheProviderDir }}</cacheProviderDir>
               </provider>
-  
+
             {{- with .Values.artifactory.persistence.awsS3V3 }}
               <provider id="s3-storage-v3" type="s3-storage-v3">
                   <testConnection>{{ .testConnection }}</testConnection>
@@ -329,7 +329,7 @@ spec:
             {{- end }}
           </config>
           {{- end }}
-  
+
           {{- if eq .Values.artifactory.persistence.type "aws-s3" }}
           <!-- AWS S3 -->
           <config version="2">
@@ -345,30 +345,30 @@ spec:
                       </provider>
                   </provider>
               </chain>
-  
+
               <!-- Set max cache-fs size -->
               <provider id="cache-fs" type="cache-fs">
                   <maxCacheSize>{{ .Values.artifactory.persistence.maxCacheSize }}</maxCacheSize>
                   <cacheProviderDir>{{ .Values.artifactory.persistence.cacheProviderDir }}</cacheProviderDir>
               </provider>
-  
+
               <provider id="eventual-cluster" type="eventual-cluster">
                   <zone>local</zone>
               </provider>
-  
+
               <provider id="remote" type="remote">
                   <checkPeriod>30</checkPeriod>
                   <timeout>10000</timeout>
                   <zone>remote</zone>
               </provider>
-  
+
               <provider id="sharding-cluster" type="sharding-cluster">
                   <readBehavior>crossNetworkStrategy</readBehavior>
                   <writeBehavior>crossNetworkStrategy</writeBehavior>
                   <redundancy>{{ .Values.artifactory.persistence.redundancy }}</redundancy>
                   <property name="zones" value="local,remote"/>
               </provider>
-  
+
               <provider id="s3" type="s3">
                   <endpoint>{{ .Values.artifactory.persistence.awsS3.endpoint }}</endpoint>
               {{- if .Values.artifactory.persistence.awsS3.roleName }}
@@ -410,13 +410,13 @@ spec:
                       </provider>
                   </provider>
               </chain>
-  
+
               <!-- Set max cache-fs size -->
               <provider id="cache-fs" type="cache-fs">
                   <maxCacheSize>{{ .Values.artifactory.persistence.maxCacheSize }}</maxCacheSize>
                   <cacheProviderDir>{{ .Values.artifactory.persistence.cacheProviderDir }}</cacheProviderDir>
               </provider>
-  
+
               <!-- cluster eventual Azure Blob Storage Service default chain -->
               <provider id="sharding-cluster" type="sharding-cluster">
                   <readBehavior>crossNetworkStrategy</readBehavior>
@@ -425,15 +425,15 @@ spec:
                   <lenientLimit>1</lenientLimit>
                   <property name="zones" value="local,remote"/>
               </provider>
-  
+
               <provider id="remote" type="remote">
                   <zone>remote</zone>
               </provider>
-  
+
               <provider id="eventual-cluster" type="eventual-cluster">
                   <zone>local</zone>
               </provider>
-  
+
               <!--cluster eventual template-->
               <provider id="azure-blob-storage" type="azure-blob-storage">
                   <accountName>{{ .Values.artifactory.persistence.azureBlob.accountName }}</accountName>
@@ -754,7 +754,7 @@ spec:
           }
           chunked_transfer_encoding on;
           client_max_body_size 0;
-  
+
           location / {
             proxy_read_timeout  900;
             proxy_pass_header   Server;
@@ -769,7 +769,7 @@ spec:
             proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
             proxy_set_header    Host              $http_host;
             proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
-  
+
             location /artifactory/ {
               if ( $request_uri ~ ^/artifactory/(.*)$ ) {
                 proxy_pass       {{ include "artifactory-ha.scheme" . }}://{{ include "artifactory-ha.fullname" . }}:{{ .Values.artifactory.externalArtifactoryPort }}/artifactory/$1;
@@ -1089,5 +1089,3 @@ spec:
       annotations: {}
       create: true
     waitForDatabase: true
-  
-  

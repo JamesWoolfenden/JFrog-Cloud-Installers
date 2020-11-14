@@ -1,6 +1,6 @@
-# JFrog Unified Platform On Openshift 
+# JFrog Unified Platform On Openshift
 
-This code base is intended to deploy JFrog Unified Platform products as either helm or an operator to an Openshift4 cluster. 
+This code base is intended to deploy JFrog Unified Platform products as either helm or an operator to an Openshift4 cluster.
 
 You can run the operator either through the operator-sdk, operator.yaml, or the OperatorHub OLM (CSV).
 
@@ -22,7 +22,7 @@ Or run it locally using CodeReadyContainers or your own on-perm solution.
 
 Note if you are going to use CRC / On-prem to run the Operators you will need to ensure:
 
-``` 
+```
  - create at least one Persistent volume of 200Gi per Artifactory node used in HA configuration
  - create at least 3 or more additional Persistent volumes 100Gi in size or more for Postgresql, Rabbitmq, and other components used.
 ```
@@ -35,7 +35,7 @@ Download and install the Openshift command line tool: oc
 
 ## Next Steps
 
-To install JFrog Operators please use the web console's OperatorHub to install the official operators. This is the easiest way to install it. 
+To install JFrog Operators please use the web console's OperatorHub to install the official operators. This is the easiest way to install it.
 
 If you wish to install the operator(s) locally please refer to the instructions that can be found in the README under artifactory-ha-operator.
 
@@ -49,7 +49,7 @@ openshift-artifactory-ha
 ```
 
 Xray Helm Chart:
-``` 
+```
 openshift-xray
 ```
 

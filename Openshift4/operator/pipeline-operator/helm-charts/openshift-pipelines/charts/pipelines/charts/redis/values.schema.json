@@ -1,88 +1,108 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "type": "object",
   "properties": {
-    "usePassword": {
-      "type": "boolean",
-      "title": "Use password authentication",
-      "form": true
-    },
-    "password": {
-      "type": "string",
-      "title": "Password",
-      "form": true,
-      "description": "Defaults to a random 10-character alphanumeric string if not set",
-      "hidden": {
-        "condition": false,
-        "value": "usePassword"
-      }
-    },
     "cluster": {
-      "type": "object",
-      "title": "Cluster Settings",
       "form": true,
       "properties": {
         "enabled": {
-          "type": "boolean",
+          "description": "Enable master-slave architecture",
           "form": true,
           "title": "Enable master-slave",
-          "description": "Enable master-slave architecture"
+          "type": "boolean"
         },
         "slaveCount": {
-          "type": "integer",
-          "title": "Slave Replicas",
           "form": true,
           "hidden": {
             "condition": false,
             "value": "cluster.enabled"
-          }
+          },
+          "title": "Slave Replicas",
+          "type": "integer"
         }
-      }
+      },
+      "title": "Cluster Settings",
+      "type": "object"
     },
     "master": {
-      "type": "object",
-      "title": "Master replicas settings",
       "form": true,
       "properties": {
         "persistence": {
-          "type": "object",
-          "title": "Persistence for master replicas",
           "form": true,
           "properties": {
             "enabled": {
-              "type": "boolean",
+              "description": "Enable persistence using Persistent Volume Claims",
               "form": true,
               "title": "Enable persistence",
-              "description": "Enable persistence using Persistent Volume Claims"
+              "type": "boolean"
+            },
+            "matchExpressions": {
+              "title": "Persistent Match Expressions Selector",
+              "type": "object"
+            },
+            "matchLabels": {
+              "title": "Persistent Match Labels Selector",
+              "type": "object"
             },
             "size": {
-              "type": "string",
-              "title": "Persistent Volume Size",
               "form": true,
-              "render": "slider",
-              "sliderMin": 1,
-              "sliderMax": 100,
-              "sliderUnit": "Gi",
               "hidden": {
                 "condition": false,
                 "value": "master.persistence.enabled"
-              }
-            },
-            "matchLabels": {
-              "type": "object",
-              "title": "Persistent Match Labels Selector"
-            },
-            "matchExpressions": {
-              "type": "object",
-              "title": "Persistent Match Expressions Selector"
+              },
+              "render": "slider",
+              "sliderMax": 100,
+              "sliderMin": 1,
+              "sliderUnit": "Gi",
+              "title": "Persistent Volume Size",
+              "type": "string"
             }
-          }
+          },
+          "title": "Persistence for master replicas",
+          "type": "object"
         }
-      }
+      },
+      "title": "Master replicas settings",
+      "type": "object"
+    },
+    "metrics": {
+      "form": true,
+      "properties": {
+        "enabled": {
+          "description": "Create a side-car container to expose Prometheus metrics",
+          "form": true,
+          "title": "Create Prometheus metrics exporter",
+          "type": "boolean"
+        },
+        "serviceMonitor": {
+          "properties": {
+            "enabled": {
+              "description": "Create a ServiceMonitor to track metrics using Prometheus Operator",
+              "form": true,
+              "hidden": {
+                "condition": false,
+                "value": "metrics.enabled"
+              },
+              "title": "Create Prometheus Operator ServiceMonitor",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "title": "Prometheus metrics details",
+      "type": "object"
+    },
+    "password": {
+      "description": "Defaults to a random 10-character alphanumeric string if not set",
+      "form": true,
+      "hidden": {
+        "condition": false,
+        "value": "usePassword"
+      },
+      "title": "Password",
+      "type": "string"
     },
     "slave": {
-      "type": "object",
-      "title": "Slave replicas settings",
       "form": true,
       "hidden": {
         "condition": false,
@@ -90,79 +110,59 @@
       },
       "properties": {
         "persistence": {
-          "type": "object",
-          "title": "Persistence for slave replicas",
           "form": true,
           "properties": {
             "enabled": {
-              "type": "boolean",
+              "description": "Enable persistence using Persistent Volume Claims",
               "form": true,
               "title": "Enable persistence",
-              "description": "Enable persistence using Persistent Volume Claims"
+              "type": "boolean"
+            },
+            "matchExpressions": {
+              "title": "Persistent Match Expressions Selector",
+              "type": "object"
+            },
+            "matchLabels": {
+              "title": "Persistent Match Labels Selector",
+              "type": "object"
             },
             "size": {
-              "type": "string",
-              "title": "Persistent Volume Size",
               "form": true,
-              "render": "slider",
-              "sliderMin": 1,
-              "sliderMax": 100,
-              "sliderUnit": "Gi",
               "hidden": {
                 "condition": false,
                 "value": "slave.persistence.enabled"
-              }
-            },
-            "matchLabels": {
-              "type": "object",
-              "title": "Persistent Match Labels Selector"
-            },
-            "matchExpressions": {
-              "type": "object",
-              "title": "Persistent Match Expressions Selector"
+              },
+              "render": "slider",
+              "sliderMax": 100,
+              "sliderMin": 1,
+              "sliderUnit": "Gi",
+              "title": "Persistent Volume Size",
+              "type": "string"
             }
-          }
+          },
+          "title": "Persistence for slave replicas",
+          "type": "object"
         }
-      }
+      },
+      "title": "Slave replicas settings",
+      "type": "object"
+    },
+    "usePassword": {
+      "form": true,
+      "title": "Use password authentication",
+      "type": "boolean"
     },
     "volumePermissions": {
-      "type": "object",
       "properties": {
         "enabled": {
-          "type": "boolean",
+          "description": "Use an init container to set required folder permissions on the data volume before mounting it in the final destination",
           "form": true,
           "title": "Enable Init Containers",
-          "description": "Use an init container to set required folder permissions on the data volume before mounting it in the final destination"
+          "type": "boolean"
         }
-      }
-    },
-    "metrics": {
-      "type": "object",
-      "form": true,
-      "title": "Prometheus metrics details",
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "title": "Create Prometheus metrics exporter",
-          "description": "Create a side-car container to expose Prometheus metrics",
-          "form": true
-        },
-        "serviceMonitor": {
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "type": "boolean",
-              "title": "Create Prometheus Operator ServiceMonitor",
-              "description": "Create a ServiceMonitor to track metrics using Prometheus Operator",
-              "form": true,
-              "hidden": {
-                "condition": false,
-                "value": "metrics.enabled"
-              }
-            }
-          }
-        }
-      }
+      },
+      "type": "object"
     }
-  }
+  },
+  "type": "object"
 }

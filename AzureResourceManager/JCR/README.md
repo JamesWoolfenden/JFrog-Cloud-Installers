@@ -23,13 +23,13 @@ This template can help you setup the [JFrog Container Registry](https://www.jfro
 
 4. Once deployment is done. Copy FQDN from Output of deployment template.
 
-5. Access artifactory using FQDN. 
+5. Access artifactory using FQDN.
 
-### Note: 
+### Note:
 1. Turn off daily backups.  Read Documentation provided [here](https://www.jfrog.com/confluence/display/RTF/Managing+Backups)
 2. Add an SSL Certificate to access Docker without using the insecure option
 3. Input values for 'adminUsername' and 'adminPassword' parameters needs to follow azure VM access rules.
-4. Refer to [System Requirements](https://www.jfrog.com/confluence/display/RTF/System+Requirements) for changing 'extraJavaOptions' input parameter value. 
+4. Refer to [System Requirements](https://www.jfrog.com/confluence/display/RTF/System+Requirements) for changing 'extraJavaOptions' input parameter value.
 
 ### Steps to setup Artifactory as secure docker registry
 You will need a valid SSL certificate for a domain name (for example, artifactory.jfrog.team)
@@ -44,15 +44,12 @@ You will need a valid SSL certificate for a domain name (for example, artifactor
 
 ### Steps to upgrade Artifactory Version
 
-1. Login into the VM instance and sudo as root. Use the admin credentials provided in the install setup.  
+1. Login into the VM instance and sudo as root. Use the admin credentials provided in the install setup.
 Note: Use load balancer's NAT entries under Azure resources, to get the allocated NAT port for accessing the VM instance.
 
 2. Upgrade artifactory with following [RPM instructions](https://www.jfrog.com/confluence/display/JCR/Upgrading+JFrog+Container+Registry#UpgradingJFrogContainerRegistry-RPMInstallation).
 ------
 #### Note:
-Supported locations: `East US 2`, `Central US`, `West Central US` and `West Europe`.  
-Please check the Azure region support for `Standard Sku` property in load balancer for this template to work properly.  
-Check for SQL server support on specified location. If SQL server is not available in the location, Use 'DB_Location' to specify the location with SQL server support.  
-
-
- 
+Supported locations: `East US 2`, `Central US`, `West Central US` and `West Europe`.
+Please check the Azure region support for `Standard Sku` property in load balancer for this template to work properly.
+Check for SQL server support on specified location. If SQL server is not available in the location, Use 'DB_Location' to specify the location with SQL server support.

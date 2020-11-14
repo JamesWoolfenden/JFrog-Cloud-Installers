@@ -31,7 +31,7 @@ else
       # create the license secret
       oc create secret generic artifactory-license --from-file=artifactory.cluster.license
     fi
-    
+
     if [[ -f "tls.crt" ]]
     then
       echo "Creating k8s secret for TLS tls-ingress from files tls.crt & tls.key"

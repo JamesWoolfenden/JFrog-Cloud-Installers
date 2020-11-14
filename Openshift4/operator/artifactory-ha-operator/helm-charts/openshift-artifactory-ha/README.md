@@ -6,12 +6,12 @@ The Artifactory HA chart has been made a subchart of this chart.
 Note due to this change we now reference values through the subchart name as shown below:
 
 original:
-``` 
+```
 artifactory.node.replicaCount
 ```
 
 now:
-``` 
+```
 artifactory-ha.artifactory.node.replicaCount
 ```
 

@@ -1,6 +1,6 @@
 # JFrog Pipeline Enterprise Operator
 
-This code base is intended to deploy Pipelines as an operator to an Openshift4 cluster. 
+This code base is intended to deploy Pipelines as an operator to an Openshift4 cluster.
 Openshift OperatorHub has the latest official supported Cluster Service Version (CSV) for the OLM catalog.
 
 ## Prerequisites

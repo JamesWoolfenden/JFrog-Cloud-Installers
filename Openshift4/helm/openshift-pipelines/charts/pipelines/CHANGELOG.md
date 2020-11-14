@@ -66,7 +66,7 @@ All changes to this chart to be documented in this file
 
 ## [1.3.9] - July 31, 2020
 * Added support for customVolumes, configMaps and customInitcontainers for Vault
-* Added tpl for resolving jfrogUrl 
+* Added tpl for resolving jfrogUrl
 
 ## [1.3.8] - July 30, 2020
 * Fix customSideCar container bug for configMaps
@@ -107,7 +107,7 @@ All changes to this chart to be documented in this file
 
 ## [1.1.5] - May 13, 2020
 * Pipelines v1.4.7
- 
+
 ## [1.1.4] - April 30, 2020
 * In readme fix helm template examples
 
@@ -168,7 +168,7 @@ All changes to this chart to be documented in this file
 * Pipelines v1.3.1
 
 ## [1.0.25] - Feb 27, 2020
-* Initial public release 
+* Initial public release
 
 ## [1.0.24] - Feb 26, 2020
 * Bump Redis chart to 10.5.6

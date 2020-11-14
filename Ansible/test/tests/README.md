@@ -13,7 +13,7 @@
  ~/.gradle/caches/
  ./gradlew clean
 ```
-### Or run 
+### Or run
 ```
  ./gradlew clean
 ```

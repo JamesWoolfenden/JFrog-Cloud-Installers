@@ -1,31 +1,82 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
+  "outputs": {
+    "fqdn": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('pipPrimaryName')),'2018-07-01').dnsSettings.fqdn]"
+    }
+  },
   "parameters": {
-    "vmSku": {
-      "type": "string",
-      "defaultValue": "Standard_D2s_v3",
+    "DB_Admin_Password": {
       "metadata": {
-        "description": "Size of VMs in the VM Scale Set."
-      }
+        "description": "Database Admin password"
+      },
+      "minLength": 1,
+      "type": "securestring"
     },
-    "clusterName": {
-      "type": "string",
-      "maxLength": 61,
+    "DB_Admin_User": {
       "metadata": {
-        "description": "String used as a base for naming resources. Must be 3-61 characters in length and globally unique across Azure. A hash is prepended to this string for some resources, and resource-specific information is appended."
-      }
+        "description": "Database Admin user name"
+      },
+      "minLength": 1,
+      "type": "string"
     },
-    "location": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]",
+    "DB_Edition": {
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Basic",
       "metadata": {
-        "description": "Location for the resources."
-      }
+        "description": "Database Edition"
+      },
+      "minLength": 1,
+      "type": "string"
+    },
+    "DB_Name": {
+      "metadata": {
+        "description": "Database name"
+      },
+      "minLength": 1,
+      "type": "string"
+    },
+    "_artifactsLocation": {
+      "defaultValue": "[deployment().properties.templateLink.uri]",
+      "metadata": {
+        "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+      },
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "defaultValue": "",
+      "metadata": {
+        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+      },
+      "type": "securestring"
+    },
+    "adminPassword": {
+      "metadata": {
+        "description": "Admin password on all VMs. Follow conventions for azure VM admin password rules."
+      },
+      "type": "securestring"
+    },
+    "adminUsername": {
+      "metadata": {
+        "description": "Admin username on all VMs. Follow conventions for azure VM admin user name."
+      },
+      "type": "string"
+    },
+    "artifactoryServerName": {
+      "defaultValue": "artifactory",
+      "metadata": {
+        "description": "Provide artifactory server name to be used in Nginx. e.g artifactory for artifactory.jfrog.team"
+      },
+      "minLength": 1,
+      "type": "string"
     },
     "artifactoryVersion": {
-      "type": "string",
-      "defaultValue": "0.0.3",
       "allowedValues": [
         "7.2.1",
         "7.3.2",
@@ -33,175 +84,85 @@
         "0.0.2",
         "0.0.3"
       ],
+      "defaultValue": "0.0.3",
       "metadata": {
         "description": "JFrog Container Registry-vm image version to deploy."
-      }
+      },
+      "type": "string"
+    },
+    "certificate": {
+      "metadata": {
+        "description": "To use Artifactory as docker registry you need to provide wild card valid Certificate. Provide your SSL Certificate."
+      },
+      "type": "securestring"
+    },
+    "certificateDomain": {
+      "defaultValue": "artifactory",
+      "metadata": {
+        "description": "Provide your Certificate Domain Name. For e.g jfrog.team for certificate with *.jfrog.team"
+      },
+      "minLength": 1,
+      "type": "string"
+    },
+    "certificateKey": {
+      "metadata": {
+        "description": "Provide your SSL Certificate key"
+      },
+      "type": "securestring"
+    },
+    "clusterName": {
+      "maxLength": 61,
+      "metadata": {
+        "description": "String used as a base for naming resources. Must be 3-61 characters in length and globally unique across Azure. A hash is prepended to this string for some resources, and resource-specific information is appended."
+      },
+      "type": "string"
+    },
+    "extraJavaOptions": {
+      "defaultValue": "-server -Xms2g -Xmx12g -Xss256k -XX:+UseG1GC -XX:OnOutOfMemoryError=\\\"kill -9 %p\\\"",
+      "metadata": {
+        "description": "Setting Java Memory Parameters for Artifactory. Learn about system requirements for Artifactory https://www.jfrog.com/confluence/display/RTF/System+Requirements#SystemRequirements-RecommendedHardware."
+      },
+      "minLength": 1,
+      "type": "string"
+    },
+    "location": {
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the resources."
+      },
+      "type": "string"
     },
     "masterKey": {
-      "type": "securestring",
       "maxLength": 64,
       "metadata": {
         "description": "Master key for JFrog Container Registry cluster. Generate master.key using command '$openssl rand -hex 16'"
-      }
-    },
-    "adminUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "Admin username on all VMs. Follow conventions for azure VM admin user name."
-      }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Admin password on all VMs. Follow conventions for azure VM admin password rules."
-      }
-    },
-    "certificate": {
-      "type": "securestring",
-      "metadata": {
-        "description": "To use Artifactory as docker registry you need to provide wild card valid Certificate. Provide your SSL Certificate."
-      }
-    },
-    "certificateKey": {
-      "type": "securestring",
-      "metadata":  {
-        "description": "Provide your SSL Certificate key"
-      }
-    },
-    "certificateDomain": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "artifactory",
-      "metadata":  {
-        "description": "Provide your Certificate Domain Name. For e.g jfrog.team for certificate with *.jfrog.team"
-      }
-    },
-    "artifactoryServerName": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "artifactory",
-      "metadata":  {
-        "description": "Provide artifactory server name to be used in Nginx. e.g artifactory for artifactory.jfrog.team"
-      }
-    },
-    "extraJavaOptions": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "-server -Xms2g -Xmx12g -Xss256k -XX:+UseG1GC -XX:OnOutOfMemoryError=\\\"kill -9 %p\\\"",
-      "metadata":  {
-        "description": "Setting Java Memory Parameters for Artifactory. Learn about system requirements for Artifactory https://www.jfrog.com/confluence/display/RTF/System+Requirements#SystemRequirements-RecommendedHardware."
-      }
-    },
-    "DB_Admin_User": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Database Admin user name"
-      }
-    },
-    "DB_Admin_Password": {
-      "type": "securestring",
-      "minLength": 1,
-      "metadata": {
-        "description": "Database Admin password"
-      }
-    },
-    "DB_Name": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Database name"
-      }
-    },
-    "DB_Edition": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "Basic",
-      "allowedValues": [
-        "Basic",
-        "Standard",
-        "Premium"
-      ],
-      "metadata": {
-        "description": "Database Edition"
-      }
+      },
+      "type": "securestring"
     },
     "storageAccountType": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
       "allowedValues": [
         "Standard_LRS",
         "Standard_GRS",
         "Standard_ZRS"
       ],
+      "defaultValue": "Standard_LRS",
       "metadata": {
         "description": "Storage Account type"
-      }
-    },
-    "_artifactsLocation": {
-      "type": "string",
-      "metadata": {
-        "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
       },
-      "defaultValue": "[deployment().properties.templateLink.uri]"
+      "type": "string"
     },
-    "_artifactsLocationSasToken": {
-      "type": "securestring",
+    "vmSku": {
+      "defaultValue": "Standard_D2s_v3",
       "metadata": {
-        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+        "description": "Size of VMs in the VM Scale Set."
       },
-      "defaultValue": ""
+      "type": "string"
     }
-  },
-  "variables": {
-    "namingInfix": "[toLower(substring(concat(parameters('clusterName'), uniqueString(resourceGroup().id)), 0, 9))]",
-    "addressPrefix": "10.0.0.0/16",
-    "subnetPrimaryPrefix": "10.0.1.0/24",
-    "virtualNetworkName": "[concat(variables('namingInfix'), 'vnet')]",
-    "subnetPrimaryName": "[concat(variables('namingInfix'), 'primarySubnet')]",
-    "scaleSetPrimaryName": "[concat(variables('namingInfix'), 'primaryScaleset')]",
-    "lbName": "[concat(variables('namingInfix'), 'lb')]",
-    "bepoolPrimaryName": "[concat(variables('lbName'), 'primaryBepool')]",
-    "fepoolPrimaryName": "[concat(variables('lbName'), 'primaryFepool')]",
-    "bepoolPrimaryID": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbName'), variables('bepoolPrimaryName'))]",
-    "feIpConfigPrimaryName": "[concat(variables('fepoolPrimaryName'), 'primaryIpConfig')]",
-    "feIpConfigPrimaryId": "[resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', variables('lbName'), variables('feIpConfigPrimaryName'))]",
-    "pipPrimaryName": "[concat(variables('namingInfix'), 'primaryPip')]",
-    "nicPrimaryName": "[concat(variables('namingInfix'), 'primaryNic')]",
-    "natPoolPrimaryName": "[concat(variables('lbName'), 'primaryNatpool')]",
-    "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
-    "httpProbePrimaryName": "primaryHttpProbe",
-    "httpsProbePrimaryName": "primaryHttpsProbe",
-    "storageAccountName": "[concat(variables('namingInfix'), 'storage')]",
-    "vmStorageAccountContainerName": "filestore",
-    "azureSqlServerName": "[concat(variables('namingInfix'), 'sqlsrv')]",
-    "DB_Name": "[parameters('DB_Name')]",
-    "DB_Admin_User": "[parameters('DB_Admin_User')]",
-    "DB_Admin_Password": "[parameters('DB_Admin_Password')]",
-    "DB_Edition": "[parameters('DB_Edition')]",
-    "DB_Location": "[parameters('location')]",
-    "masterKey": "[parameters('masterKey')]",
-    "certificate": "[parameters('certificate')]",
-    "certificateKey": "[parameters('certificateKey')]",
-    "certificateDomain": "[parameters('certificateDomain')]",
-    "artifactoryServerName": "[parameters('artifactoryServerName')]",
-    "extraJavaOptions": "[parameters('extraJavaOptions')]",
-    "osType": {
-      "publisher": "jfrog",
-      "offer": "jfrogcontainerregistry-vm",
-      "sku": "artifactory-jcr",
-      "version": "[parameters('artifactoryVersion')]"
-    },
-    "imageReference": "[variables('osType')]",
-    "dbTemplate": "azureDBDeploy.json",
-    "dbTemplateLocation": "[uri(parameters('_artifactsLocation'), concat('nested/', variables('dbTemplate'), parameters('_artifactsLocationSasToken')))]",
-    "nsgName": "[concat(variables('namingInfix'), 'nsg')]"
   },
   "resources": [
     {
       "apiVersion": "2019-05-01",
       "name": "pid-04c1c376-5d4b-4771-9a7f-054f5910dcef",
-      "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "template": {
@@ -209,96 +170,96 @@
           "contentVersion": "1.0.0.0",
           "resources": []
         }
-      }
+      },
+      "type": "Microsoft.Resources/deployments"
     },
     {
-      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-03-01",
       "location": "[parameters('location')]",
       "name": "[variables('nsgName')]",
-      "apiVersion": "2020-03-01",
       "properties": {
         "securityRules": [
           {
             "name": "ssh-rule",
             "properties": {
-              "description": "Allow SSH",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "22",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
               "access": "Allow",
+              "description": "Allow SSH",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "22",
+              "direction": "Inbound",
               "priority": 100,
-              "direction": "Inbound"
+              "protocol": "Tcp",
+              "sourceAddressPrefix": "Internet",
+              "sourcePortRange": "*"
             }
           },
           {
             "name": "http-artifactory-rule",
             "properties": {
-              "description": "Allow HTTP",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "8081",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
               "access": "Allow",
+              "description": "Allow HTTP",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "8081",
+              "direction": "Inbound",
               "priority": 101,
-              "direction": "Inbound"
+              "protocol": "Tcp",
+              "sourceAddressPrefix": "Internet",
+              "sourcePortRange": "*"
             }
           },
           {
             "name": "http-nginx-rule",
             "properties": {
-              "description": "Allow HTTP",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "80",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
               "access": "Allow",
+              "description": "Allow HTTP",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "80",
+              "direction": "Inbound",
               "priority": 102,
-              "direction": "Inbound"
+              "protocol": "Tcp",
+              "sourceAddressPrefix": "Internet",
+              "sourcePortRange": "*"
             }
           },
           {
             "name": "https-nginx-rule",
             "properties": {
-              "description": "Allow HTTP",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "443",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
               "access": "Allow",
+              "description": "Allow HTTP",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "443",
+              "direction": "Inbound",
               "priority": 103,
-              "direction": "Inbound"
+              "protocol": "Tcp",
+              "sourceAddressPrefix": "Internet",
+              "sourcePortRange": "*"
             }
           },
           {
             "name": "membership-rule",
             "properties": {
-              "description": "Allow HTTP",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "10001",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
               "access": "Allow",
+              "description": "Allow HTTP",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "10001",
+              "direction": "Inbound",
               "priority": 105,
-              "direction": "Inbound"
+              "protocol": "Tcp",
+              "sourceAddressPrefix": "Internet",
+              "sourcePortRange": "*"
             }
           }
         ]
-      }
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
     },
     {
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[variables('virtualNetworkName')]",
-      "location": "[parameters('location')]",
       "apiVersion": "2020-03-01",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
       ],
+      "location": "[parameters('location')]",
+      "name": "[variables('virtualNetworkName')]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -316,18 +277,18 @@
             }
           }
         ]
-      }
+      },
+      "type": "Microsoft.Network/virtualNetworks"
     },
     {
       "apiVersion": "2020-03-01",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('nicPrimaryName')]",
-      "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pipPrimaryName'))]",
         "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
         "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
       ],
+      "location": "[parameters('location')]",
+      "name": "[variables('nicPrimaryName')]",
       "properties": {
         "ipConfigurations": [
           {
@@ -343,38 +304,37 @@
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
         }
-      }
+      },
+      "type": "Microsoft.Network/networkInterfaces"
     },
     {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('pipPrimaryName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "Standard"
-      },
       "apiVersion": "2020-03-01",
+      "location": "[parameters('location')]",
+      "name": "[variables('pipPrimaryName')]",
       "properties": {
-        "publicIPAllocationMethod": "Static",
         "dnsSettings": {
           "domainNameLabel": "[variables('namingInfix')]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Network/loadBalancers",
-      "name": "[variables('lbName')]",
-      "location": "[parameters('location')]",
-      "apiVersion": "2020-03-01",
+        },
+        "publicIPAllocationMethod": "Static"
+      },
       "sku": {
         "name": "Standard"
       },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-03-01",
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pipPrimaryName'))]"
       ],
-      "tags":{
-        "displayName": "Load Balancer"
-      },
+      "location": "[parameters('location')]",
+      "name": "[variables('lbName')]",
       "properties": {
+        "backendAddressPools": [
+          {
+            "name": "[variables('bepoolPrimaryName')]"
+          }
+        ],
         "frontendIPConfigurations": [
           {
             "name": "[variables('feIpConfigPrimaryName')]",
@@ -385,22 +345,17 @@
             }
           }
         ],
-        "backendAddressPools": [
-          {
-            "name": "[variables('bepoolPrimaryName')]"
-          }
-        ],
         "inboundNatPools": [
           {
             "name": "[variables('natPoolPrimaryName')]",
             "properties": {
+              "backendPort": 22,
               "frontendIPConfiguration": {
                 "id": "[variables('feIpConfigPrimaryId')]"
               },
-              "protocol": "tcp",
-              "frontendPortRangeStart": 10022,
               "frontendPortRangeEnd": 11022,
-              "backendPort": 22
+              "frontendPortRangeStart": 10022,
+              "protocol": "tcp"
             }
           }
         ],
@@ -408,41 +363,41 @@
           {
             "name": "HTTPRulePrimary",
             "properties": {
-              "loadDistribution": "Default",
-              "frontendIPConfiguration": {
-                "id": "[variables('feIpConfigPrimaryId')]"
-              },
               "backendAddressPool": {
                 "id": "[variables('bepoolPrimaryID')]"
               },
-              "protocol": "Tcp",
-              "frontendPort": 80,
               "backendPort": 80,
               "enableFloatingIP": false,
+              "frontendIPConfiguration": {
+                "id": "[variables('feIpConfigPrimaryId')]"
+              },
+              "frontendPort": 80,
               "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
               "probe": {
                 "id": "[resourceId('Microsoft.Network/loadBalancers/probes', variables('lbName'), variables('httpProbePrimaryName'))]"
-              }
+              },
+              "protocol": "Tcp"
             }
           },
           {
             "name": "HTTPSRulePrimary",
             "properties": {
-              "loadDistribution": "Default",
-              "frontendIPConfiguration": {
-                "id": "[variables('feIpConfigPrimaryId')]"
-              },
               "backendAddressPool": {
                 "id": "[variables('bepoolPrimaryID')]"
               },
-              "protocol": "Tcp",
-              "frontendPort": 443,
               "backendPort": 443,
               "enableFloatingIP": false,
+              "frontendIPConfiguration": {
+                "id": "[variables('feIpConfigPrimaryId')]"
+              },
+              "frontendPort": 443,
               "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
               "probe": {
                 "id": "[resourceId('Microsoft.Network/loadBalancers/probes', variables('lbName'), variables('httpsProbePrimaryName'))]"
-              }
+              },
+              "protocol": "Tcp"
             }
           }
         ],
@@ -450,52 +405,60 @@
           {
             "name": "[variables('httpProbePrimaryName')]",
             "properties": {
-              "protocol": "Http",
-              "requestPath": "/artifactory/api/system/ping",
-              "port": 80,
               "intervalInSeconds": 60,
-              "numberOfProbes": 5
+              "numberOfProbes": 5,
+              "port": 80,
+              "protocol": "Http",
+              "requestPath": "/artifactory/api/system/ping"
             }
           },
           {
             "name": "[variables('httpsProbePrimaryName')]",
             "properties": {
-              "protocol": "Tcp",
-              "port": 443,
               "intervalInSeconds": 60,
-              "numberOfProbes": 5
+              "numberOfProbes": 5,
+              "port": 443,
+              "protocol": "Tcp"
             }
           }
         ]
-      }
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "tags": {
+        "displayName": "Load Balancer"
+      },
+      "type": "Microsoft.Network/loadBalancers"
     },
     {
       "apiVersion": "2019-06-01",
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
+      "kind": "Storage",
       "location": "[parameters('location')]",
+      "name": "[variables('storageAccountName')]",
+      "properties": {},
       "sku": {
         "name": "[parameters('storageAccountType')]"
       },
-      "tags":{
+      "tags": {
         "displayName": "Artifactory Storage Account"
       },
-      "kind": "Storage",
-      "properties": {}
+      "type": "Microsoft.Storage/storageAccounts"
     },
     {
-      "type": "Microsoft.Resources/deployments",
-      "name": "deploySQLDB",
       "apiVersion": "2019-09-01",
+      "name": "deploySQLDB",
       "properties": {
         "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('dbTemplateLocation')]",
-          "contentVersion": "1.0.0.0"
-        },
         "parameters": {
-          "db_user": {
-            "value": "[parameters('DB_Admin_User')]"
+          "db_edition": {
+            "value": "[variables('DB_Edition')]"
+          },
+          "db_location": {
+            "value": "[variables('DB_Location')]"
+          },
+          "db_name": {
+            "value": "[parameters('DB_Name')]"
           },
           "db_password": {
             "value": "[parameters('DB_Admin_Password')]"
@@ -503,22 +466,18 @@
           "db_server": {
             "value": "[variables('azureSqlServerName')]"
           },
-          "db_name": {
-            "value": "[parameters('DB_Name')]"
-          },
-          "db_edition": {
-            "value": "[variables('DB_Edition')]"
-          },
-          "db_location": {
-            "value": "[variables('DB_Location')]"
+          "db_user": {
+            "value": "[parameters('DB_Admin_User')]"
           }
+        },
+        "templateLink": {
+          "contentVersion": "1.0.0.0",
+          "uri": "[variables('dbTemplateLocation')]"
         }
-      }
+      },
+      "type": "Microsoft.Resources/deployments"
     },
     {
-      "type": "Microsoft.Compute/virtualMachineScaleSets",
-      "name": "[variables('scaleSetPrimaryName')]",
-      "location": "[parameters('location')]",
       "apiVersion": "2018-10-01",
       "dependsOn": [
         "[resourceId('Microsoft.Network/loadBalancers/', variables('lbName'))]",
@@ -526,50 +485,50 @@
         "[resourceId('Microsoft.Resources/deployments/', 'deploySQLDB')]",
         "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
       ],
+      "location": "[parameters('location')]",
+      "name": "[variables('scaleSetPrimaryName')]",
       "plan": {
         "name": "artifactory-jcr",
-        "publisher": "jfrog",
-        "product": "jfrogcontainerregistry-vm"
-      },
-      "sku": {
-        "name": "[parameters('vmSku')]",
-        "tier": "Standard",
-        "capacity": "1"
+        "product": "jfrogcontainerregistry-vm",
+        "publisher": "jfrog"
       },
       "properties": {
-        "singlePlacementGroup": true,
         "overprovision": "false",
+        "singlePlacementGroup": true,
         "upgradePolicy": {
           "mode": "Manual"
         },
         "virtualMachineProfile": {
-          "storageProfile": {
-            "osDisk": {
-              "caching": "ReadWrite",
-              "diskSizeGB": "250",
-              "createOption": "FromImage"
-            },
-            "imageReference": "[variables('imageReference')]"
-          },
-          "osProfile": {
-            "computerNamePrefix": "[variables('namingInfix')]",
-            "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassword')]",
-            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nCERTIFICATE_KEY=',variables('certificateKey'),'\nCERTIFICATE=', variables('certificate'),'\nCERTIFICATE_DOMAIN=',variables('certificateDomain'),'\nARTIFACTORY_SERVER_NAME=',variables('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',variables('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('DB_Name'),'\nDB_ADMIN_USER=',variables('DB_Admin_User'),'\nDB_ADMIN_PASSWD=',variables('DB_Admin_Password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nIS_PRIMARY=','true','\n'))]"
+          "extensionProfile": {
+            "extensions": [
+              {
+                "name": "extension1",
+                "properties": {
+                  "autoUpgradeMinorVersion": false,
+                  "protectedSettings": {
+                    "commandToExecute": "sh install_artifactory7.sh"
+                  },
+                  "publisher": "Microsoft.Azure.Extensions",
+                  "settings": {
+                    "fileUris": [
+                      "[uri(parameters('_artifactsLocation'), concat('scripts/install_artifactory7.sh', parameters('_artifactsLocationSasToken')))]"
+                    ]
+                  },
+                  "type": "CustomScript",
+                  "typeHandlerVersion": "2.0"
+                }
+              }
+            ]
           },
           "networkProfile": {
             "networkInterfaceConfigurations": [
               {
                 "name": "[variables('nicPrimaryName')]",
                 "properties": {
-                  "primary": true,
                   "ipConfigurations": [
                     {
                       "name": "[concat(variables('ipConfigName'),'1')]",
                       "properties": {
-                        "subnet": {
-                          "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetPrimaryName'))]"
-                        },
                         "loadBalancerBackendAddressPools": [
                           {
                             "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbName'), variables('bePoolPrimaryName'))]"
@@ -579,43 +538,84 @@
                           {
                             "id": "[resourceId('Microsoft.Network/loadBalancers/inboundNatPools', variables('lbName'), variables('natPoolPrimaryName'))]"
                           }
-                        ]
+                        ],
+                        "subnet": {
+                          "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetPrimaryName'))]"
+                        }
                       }
                     }
-                  ]
+                  ],
+                  "primary": true
                 }
               }
             ]
           },
-          "extensionProfile": {
-            "extensions": [
-              {
-                "name": "extension1",
-                "properties": {
-                  "publisher": "Microsoft.Azure.Extensions",
-                  "type": "CustomScript",
-                  "typeHandlerVersion": "2.0",
-                  "autoUpgradeMinorVersion": false,
-                  "settings": {
-                    "fileUris": [
-                      "[uri(parameters('_artifactsLocation'), concat('scripts/install_artifactory7.sh', parameters('_artifactsLocationSasToken')))]"
-                    ]
-                  },
-                  "protectedSettings": {
-                    "commandToExecute": "sh install_artifactory7.sh"
-                  }
-                }
-              }
-            ]
+          "osProfile": {
+            "adminPassword": "[parameters('adminPassword')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "computerNamePrefix": "[variables('namingInfix')]",
+            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nCERTIFICATE_KEY=',variables('certificateKey'),'\nCERTIFICATE=', variables('certificate'),'\nCERTIFICATE_DOMAIN=',variables('certificateDomain'),'\nARTIFACTORY_SERVER_NAME=',variables('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',variables('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('DB_Name'),'\nDB_ADMIN_USER=',variables('DB_Admin_User'),'\nDB_ADMIN_PASSWD=',variables('DB_Admin_Password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nIS_PRIMARY=','true','\n'))]"
+          },
+          "storageProfile": {
+            "imageReference": "[variables('imageReference')]",
+            "osDisk": {
+              "caching": "ReadWrite",
+              "createOption": "FromImage",
+              "diskSizeGB": "250"
+            }
           }
         }
-      }
+      },
+      "sku": {
+        "capacity": "1",
+        "name": "[parameters('vmSku')]",
+        "tier": "Standard"
+      },
+      "type": "Microsoft.Compute/virtualMachineScaleSets"
     }
   ],
-  "outputs": {
-    "fqdn": {
-      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('pipPrimaryName')),'2018-07-01').dnsSettings.fqdn]",
-      "type": "string"
-    }
+  "variables": {
+    "DB_Admin_Password": "[parameters('DB_Admin_Password')]",
+    "DB_Admin_User": "[parameters('DB_Admin_User')]",
+    "DB_Edition": "[parameters('DB_Edition')]",
+    "DB_Location": "[parameters('location')]",
+    "DB_Name": "[parameters('DB_Name')]",
+    "addressPrefix": "10.0.0.0/16",
+    "artifactoryServerName": "[parameters('artifactoryServerName')]",
+    "azureSqlServerName": "[concat(variables('namingInfix'), 'sqlsrv')]",
+    "bepoolPrimaryID": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbName'), variables('bepoolPrimaryName'))]",
+    "bepoolPrimaryName": "[concat(variables('lbName'), 'primaryBepool')]",
+    "certificate": "[parameters('certificate')]",
+    "certificateDomain": "[parameters('certificateDomain')]",
+    "certificateKey": "[parameters('certificateKey')]",
+    "dbTemplate": "azureDBDeploy.json",
+    "dbTemplateLocation": "[uri(parameters('_artifactsLocation'), concat('nested/', variables('dbTemplate'), parameters('_artifactsLocationSasToken')))]",
+    "extraJavaOptions": "[parameters('extraJavaOptions')]",
+    "feIpConfigPrimaryId": "[resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', variables('lbName'), variables('feIpConfigPrimaryName'))]",
+    "feIpConfigPrimaryName": "[concat(variables('fepoolPrimaryName'), 'primaryIpConfig')]",
+    "fepoolPrimaryName": "[concat(variables('lbName'), 'primaryFepool')]",
+    "httpProbePrimaryName": "primaryHttpProbe",
+    "httpsProbePrimaryName": "primaryHttpsProbe",
+    "imageReference": "[variables('osType')]",
+    "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
+    "lbName": "[concat(variables('namingInfix'), 'lb')]",
+    "masterKey": "[parameters('masterKey')]",
+    "namingInfix": "[toLower(substring(concat(parameters('clusterName'), uniqueString(resourceGroup().id)), 0, 9))]",
+    "natPoolPrimaryName": "[concat(variables('lbName'), 'primaryNatpool')]",
+    "nicPrimaryName": "[concat(variables('namingInfix'), 'primaryNic')]",
+    "nsgName": "[concat(variables('namingInfix'), 'nsg')]",
+    "osType": {
+      "offer": "jfrogcontainerregistry-vm",
+      "publisher": "jfrog",
+      "sku": "artifactory-jcr",
+      "version": "[parameters('artifactoryVersion')]"
+    },
+    "pipPrimaryName": "[concat(variables('namingInfix'), 'primaryPip')]",
+    "scaleSetPrimaryName": "[concat(variables('namingInfix'), 'primaryScaleset')]",
+    "storageAccountName": "[concat(variables('namingInfix'), 'storage')]",
+    "subnetPrimaryName": "[concat(variables('namingInfix'), 'primarySubnet')]",
+    "subnetPrimaryPrefix": "10.0.1.0/24",
+    "virtualNetworkName": "[concat(variables('namingInfix'), 'vnet')]",
+    "vmStorageAccountContainerName": "filestore"
   }
 }

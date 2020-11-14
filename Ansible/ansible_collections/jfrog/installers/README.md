@@ -1,15 +1,15 @@
 # JFrog Ansible Installers Collection
 
 ## Getting Started
- 
+
  1. Install this collection from Ansible Galaxy. This collection is also available in RedHat Automation Hub.
-    
+
     ```
     ansible-galaxy collection install jfrog.installers
     ```
-        
+
     Ensure you reference the collection in your playbook when using these roles.
-        
+
     ```
     ---
     - hosts: xray
@@ -17,17 +17,17 @@
         - jfrog.installers
       roles:
         - xray
-    
+
     ```
-    
- 2. Ansible uses SSH to connect to hosts. Ensure that your SSH private key is on your client and the public keys are installed on your Ansible hosts. 
- 
+
+ 2. Ansible uses SSH to connect to hosts. Ensure that your SSH private key is on your client and the public keys are installed on your Ansible hosts.
+
  3. Create your inventory file. Use one of the examples from the [examples directory](https://github.com/jfrog/JFrog-Cloud-Installers/tree/master/Ansible/examples) to construct an inventory file (hosts.yml) with the host addresses and variables.
- 
+
  4. Create your playbook. Use one of the examples from the [examples directory](https://github.com/jfrog/JFrog-Cloud-Installers/tree/master/Ansible/examples) to construct a playbook using the JFrog Ansible roles. These roles will be applied to your inventory and provision software.
- 
+
  5. Then execute with the following command to provision the JFrog software with Ansible. Variables can also be passed in at the command-line.
- 
+
  ```
 ansible-playbook -i hosts.yml playbook.yml --extra-vars "master_key=$(openssl rand -hex 16) join_key=$(openssl rand -hex 16)"
 ```

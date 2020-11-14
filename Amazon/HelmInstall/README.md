@@ -27,7 +27,7 @@ helm repo add jfrog https://charts.jfrog.io
 ### Install Chart with external PostgreSQL DB
 To install the chart with the release name `jfrog-container-registry`:
 ```bash
-helm install 
+helm install
   --name jfrog-container-registry \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.database.type=postgresql \
@@ -42,7 +42,7 @@ helm install
 ### Install Chart with external PostgreSQL DB
 To install the chart with the release name `jfrog-container-registry`:
 ```bash
-helm install 
+helm install
   --name jfrog-container-registry \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.database.type=postgresql \
@@ -65,7 +65,7 @@ See more details on [configuring the database](https://www.jfrog.com/confluence/
 
 To install the chart with the release name `jfrog-container-registry`:
 ```bash
-helm install 
+helm install
   --name jfrog-container-registry \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.artifactory.preStartCommand="wget -O /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar" \
@@ -101,7 +101,7 @@ kubectl delete pv ...
 
 ## Database
 The JFrog Container Registry chart comes with PostgreSQL deployed by default.<br>
-For details on the PostgreSQL configuration or customising the database, Look at the options described in the [Artifactory helm chart](https://github.com/jfrog/charts/tree/master/stable/artifactory). 
+For details on the PostgreSQL configuration or customising the database, Look at the options described in the [Artifactory helm chart](https://github.com/jfrog/charts/tree/master/stable/artifactory).
 
 ## Configuration
 The following table lists the **basic** configurable parameters of the JFrog Container Registry chart and their default values.

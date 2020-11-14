@@ -1,85 +1,90 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
   "handler": "Microsoft.Azure.CreateUIDef",
-  "version": "0.1.2-preview",
   "parameters": {
     "basics": [
       {}
     ],
+    "outputs": {
+      "DB_Admin_Password": "[steps('databaseConfig').dbAdminPassword]",
+      "DB_Admin_User": "[steps('databaseConfig').dbAdminUsername]",
+      "DB_Edition": "[steps('databaseConfig').dbEdition]",
+      "DB_Name": "[steps('databaseConfig').dbName]",
+      "adminPassword": "[steps('vmCredentials').adminPassword.password]",
+      "adminUsername": "[steps('vmCredentials').adminUsername]",
+      "artifactoryServerName": "[steps('clusterConfig').artifactoryServerName]",
+      "artifactoryVersion": "[steps('clusterConfig').artifactoryVersion]",
+      "certificate": "[steps('clusterConfig').certificate]",
+      "certificateDomain": "[steps('clusterConfig').certificateDomain]",
+      "certificateKey": "[steps('clusterConfig').certificateKey]",
+      "clusterName": "[steps('clusterConfig').clusterName]",
+      "extraJavaOptions": "[steps('clusterConfig').extraJavaOptions]",
+      "location": "[location()]",
+      "masterKey": "[steps('clusterConfig').masterKey]",
+      "storageAccountType": "[steps('storageConfig').storageAccountsType]",
+      "vmSku": "[steps('clusterConfig').vmSku]"
+    },
     "steps": [
       {
-        "name": "vmCredentials",
-        "label": "VM Credential",
         "bladeTitle": "VM Credential",
-        "subLabel": {
-          "preValidation": "Provide VM credentials",
-          "postValidation": "Great - let's move on!"
-        },
         "elements": [
           {
-            "name": "adminUsername",
-            "type": "Microsoft.Compute.UserNameTextBox",
-            "label": "Admin username",
-            "osPlatform": "Linux",
             "constraints": {
-              "required": true,
               "regex": "^[a-z0-9A-Z]{1,30}$",
+              "required": true,
               "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
             },
-            "toolTip": "Provide admin username for the virtual machine"
+            "label": "Admin username",
+            "name": "adminUsername",
+            "osPlatform": "Linux",
+            "toolTip": "Provide admin username for the virtual machine",
+            "type": "Microsoft.Compute.UserNameTextBox"
           },
           {
-            "name": "adminPassword",
-            "type": "Microsoft.Compute.CredentialsCombo",
-            "label": {
-              "password": "Password",
-              "confirmPassword": "Confirm password"
-            },
-            "osPlatform": "Linux",
             "constraints": {
-              "required": true,
               "customPasswordRegex": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{12,}$",
-              "customValidationMessage": "The password must contain at least 12 characters, with at least 1 uppercase letter, 1 lowercase letter and 1 number."
+              "customValidationMessage": "The password must contain at least 12 characters, with at least 1 uppercase letter, 1 lowercase letter and 1 number.",
+              "required": true
             },
+            "label": {
+              "confirmPassword": "Confirm password",
+              "password": "Password"
+            },
+            "name": "adminPassword",
             "options": {
               "hideConfirmation": false
             },
+            "osPlatform": "Linux",
             "toolTip": {
               "password": "Provide admin password for the virtual machine"
             },
+            "type": "Microsoft.Compute.CredentialsCombo",
             "visible": true
           }
-        ]
+        ],
+        "label": "VM Credential",
+        "name": "vmCredentials",
+        "subLabel": {
+          "postValidation": "Great - let's move on!",
+          "preValidation": "Provide VM credentials"
+        }
       },
       {
-        "name": "clusterConfig",
-        "label": "JFrog Container Registry Cluster settings",
-        "subLabel": {
-          "preValidation": "Configure JFrog Container Registry Cluster settings",
-          "postValidation": "Done!"
-        },
         "bladeTitle": "JFrog Container Registry Cluster Settings",
         "elements": [
           {
-            "name": "clusterName",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Cluster name",
-            "toolTip": "Cluster name",
-            "defaultValue": "",
             "constraints": {
-              "required": true,
               "regex": "^[a-z0-9A-Z]{1,30}$",
+              "required": true,
               "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
-            }
+            },
+            "defaultValue": "",
+            "label": "Cluster name",
+            "name": "clusterName",
+            "toolTip": "Cluster name",
+            "type": "Microsoft.Common.TextBox"
           },
           {
-            "name": "vmSku",
-            "type": "Microsoft.Compute.SizeSelector",
-            "label": "Virtual machine size",
-            "toolTip": "The size of the virtual machine for JFrog Container Registry",
-            "recommendedSizes": [
-              "Standard_A2_v2"
-            ],
             "constraints": {
               "allowedSizes": [
                 "Standard_A2_v2",
@@ -95,15 +100,17 @@
                 "Standard_DC4s"
               ]
             },
+            "count": 1,
+            "label": "Virtual machine size",
+            "name": "vmSku",
             "osPlatform": "Linux",
-            "count": 1
+            "recommendedSizes": [
+              "Standard_A2_v2"
+            ],
+            "toolTip": "The size of the virtual machine for JFrog Container Registry",
+            "type": "Microsoft.Compute.SizeSelector"
           },
           {
-            "name": "artifactoryVersion",
-            "type": "Microsoft.Common.DropDown",
-            "label": "JFrog Container Registry-vm image version to deploy.",
-            "defaultValue": "0.16.0",
-            "toolTip": "Version of JFrog Container Registry to dpeloy",
             "constraints": {
               "allowedValues": [
                 {
@@ -113,152 +120,152 @@
               ],
               "required": true
             },
+            "defaultValue": "0.16.0",
+            "label": "JFrog Container Registry-vm image version to deploy.",
+            "name": "artifactoryVersion",
+            "toolTip": "Version of JFrog Container Registry to dpeloy",
+            "type": "Microsoft.Common.DropDown",
             "visible": true
           },
           {
-            "name": "masterKey",
-            "type": "Microsoft.Common.PasswordBox",
-            "label": {
-              "password": "JFrog Container Registry master Key",
-              "confirmPassword": "Confirm master Key"
-            },
-            "defaultValue": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
-            "toolTip": "Master key for JFrog Container Registry cluster. Generate master.key using command '$openssl rand -hex 16'",
             "constraints": {
-              "required": true,
               "regex": "^[a-z0-9A-Z]{1,32}$",
+              "required": true,
               "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-32 characters long."
             },
+            "defaultValue": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+            "label": {
+              "confirmPassword": "Confirm master Key",
+              "password": "JFrog Container Registry master Key"
+            },
+            "name": "masterKey",
             "options": {
               "hideConfirmation": true
-            }
+            },
+            "toolTip": "Master key for JFrog Container Registry cluster. Generate master.key using command '$openssl rand -hex 16'",
+            "type": "Microsoft.Common.PasswordBox"
           },
           {
-            "name": "certificate",
-            "type": "Microsoft.Common.PasswordBox",
-            "label": {
-              "password": "Provide your SSL Certificate.",
-              "confirmPassword": "Confirm SSL Certificate."
-            },
-            "toolTip": "To use JFrog Container Registry as docker registry you need to provide wild card valid Certificate. Provide your SSL Certificate.",
             "constraints": {
-              "required": true,
               "regex": "^(-----BEGIN CERTIFICATE-----)(.+)(-----END CERTIFICATE-----)$",
+              "required": true,
               "validationMessage": "Provide SSL Certificate."
             },
+            "label": {
+              "confirmPassword": "Confirm SSL Certificate.",
+              "password": "Provide your SSL Certificate."
+            },
+            "name": "certificate",
             "options": {
               "hideConfirmation": true
-            }
+            },
+            "toolTip": "To use JFrog Container Registry as docker registry you need to provide wild card valid Certificate. Provide your SSL Certificate.",
+            "type": "Microsoft.Common.PasswordBox"
           },
           {
-            "name": "certificateKey",
-            "type": "Microsoft.Common.PasswordBox",
-            "label": {
-              "password": "Provide your SSL Certificate key.",
-              "confirmPassword": "Confirm SSL Certificate key."
-            },
-            "toolTip": "Provide your SSL Certificate key",
             "constraints": {
-              "required": true,
               "regex": "^(-----BEGIN PRIVATE KEY-----)(.+)(-----END PRIVATE KEY-----)$",
+              "required": true,
               "validationMessage": "Provide SSL Certificate Key."
             },
+            "label": {
+              "confirmPassword": "Confirm SSL Certificate key.",
+              "password": "Provide your SSL Certificate key."
+            },
+            "name": "certificateKey",
             "options": {
               "hideConfirmation": true
-            }
+            },
+            "toolTip": "Provide your SSL Certificate key",
+            "type": "Microsoft.Common.PasswordBox"
           },
           {
-            "name": "certificateDomain",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Provide your Certificate Domain Name.",
-            "defaultValue": "artifactory",
-            "toolTip": "Provide your Certificate Domain Name. For e.g jfrog.team for certificate with *.jfrog.team",
             "constraints": {
-              "required": true,
               "regex": "^(\\*)*([\\w-\\.])+$",
-              "validationMessage": "Must be a valid fully-qualified domain name."
-            }
-          },
-          {
-            "name": "artifactoryServerName",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Provide JFrog Container Registry server name to be used in Nginx.",
-            "defaultValue": "artifactory",
-            "toolTip": "Provide JFrog Container Registry server name to be used in Nginx. e.g artifactory for artifactory.jfrog.team",
-            "constraints": {
               "required": true,
-              "regex": "^[a-z0-9A-Z]{1,20}$",
-              "validationMessage": "Only letters and numbers are allowed, and the value must be 1-20 characters long."
-            }
+              "validationMessage": "Must be a valid fully-qualified domain name."
+            },
+            "defaultValue": "artifactory",
+            "label": "Provide your Certificate Domain Name.",
+            "name": "certificateDomain",
+            "toolTip": "Provide your Certificate Domain Name. For e.g jfrog.team for certificate with *.jfrog.team",
+            "type": "Microsoft.Common.TextBox"
           },
           {
-            "name": "extraJavaOptions",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Setting Java Memory Parameters for JFrog Container Registry",
-            "defaultValue": "-server -Xms512m -Xmx2g -Xss256k -XX:+UseG1GC -XX:OnOutOfMemoryError=\\\"kill -9 %p\\\"",
-            "toolTip": "Setting Java Memory Parameters for JFrog Container Registry. Learn about system requirements for JFrog Container Registry https://www.jfrog.com/confluence/display/RTF/System+Requirements#SystemRequirements-RecommendedHardware",
+            "constraints": {
+              "regex": "^[a-z0-9A-Z]{1,20}$",
+              "required": true,
+              "validationMessage": "Only letters and numbers are allowed, and the value must be 1-20 characters long."
+            },
+            "defaultValue": "artifactory",
+            "label": "Provide JFrog Container Registry server name to be used in Nginx.",
+            "name": "artifactoryServerName",
+            "toolTip": "Provide JFrog Container Registry server name to be used in Nginx. e.g artifactory for artifactory.jfrog.team",
+            "type": "Microsoft.Common.TextBox"
+          },
+          {
             "constraints": {
               "required": false
-            }
+            },
+            "defaultValue": "-server -Xms512m -Xmx2g -Xss256k -XX:+UseG1GC -XX:OnOutOfMemoryError=\\\"kill -9 %p\\\"",
+            "label": "Setting Java Memory Parameters for JFrog Container Registry",
+            "name": "extraJavaOptions",
+            "toolTip": "Setting Java Memory Parameters for JFrog Container Registry. Learn about system requirements for JFrog Container Registry https://www.jfrog.com/confluence/display/RTF/System+Requirements#SystemRequirements-RecommendedHardware",
+            "type": "Microsoft.Common.TextBox"
           }
-        ]
+        ],
+        "label": "JFrog Container Registry Cluster settings",
+        "name": "clusterConfig",
+        "subLabel": {
+          "postValidation": "Done!",
+          "preValidation": "Configure JFrog Container Registry Cluster settings"
+        }
       },
       {
-        "name": "databaseConfig",
-        "label": "Database Configuration",
-        "subLabel": {
-          "preValidation": "Configure the Database",
-          "postValidation": "Done"
-        },
         "bladeTitle": "Database Credential",
         "elements": [
           {
-            "name": "dbAdminUsername",
-            "type": "Microsoft.Compute.UserNameTextBox",
-            "label": "User name",
-            "toolTip": "Admin username for the database",
-            "osPlatform": "Linux",
             "constraints": {
-              "required": true,
               "regex": "^[a-z0-9A-Z]{1,30}$",
+              "required": true,
               "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
-            }
+            },
+            "label": "User name",
+            "name": "dbAdminUsername",
+            "osPlatform": "Linux",
+            "toolTip": "Admin username for the database",
+            "type": "Microsoft.Compute.UserNameTextBox"
           },
           {
-            "name": "dbAdminPassword",
-            "type": "Microsoft.Common.PasswordBox",
-            "label": {
-              "password": "Password",
-              "confirmPassword": "Confirm password"
-            },
-            "toolTip": "Admin password for the database",
             "constraints": {
-              "required": true,
               "regex": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{12,}$",
+              "required": true,
               "validationMessage": "The password must contain at least 12 characters, with at least 1 uppercase letter, 1 lowercase letter and 1 number."
             },
+            "label": {
+              "confirmPassword": "Confirm password",
+              "password": "Password"
+            },
+            "name": "dbAdminPassword",
             "options": {
               "hideConfirmation": false
             },
+            "toolTip": "Admin password for the database",
+            "type": "Microsoft.Common.PasswordBox",
             "visible": true
           },
           {
-            "name": "dbName",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Database name",
-            "toolTip": "Database name",
             "constraints": {
-              "required": true,
               "regex": "^[a-z0-9A-Z]{1,15}$",
+              "required": true,
               "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-15 characters long."
-            }
+            },
+            "label": "Database name",
+            "name": "dbName",
+            "toolTip": "Database name",
+            "type": "Microsoft.Common.TextBox"
           },
           {
-            "name": "dbEdition",
-            "type": "Microsoft.Common.DropDown",
-            "label": "Database Edition",
-            "defaultValue": "Basic",
-            "toolTip": "Edition of Database to use",
             "constraints": {
               "allowedValues": [
                 {
@@ -276,25 +283,25 @@
               ],
               "required": true
             },
+            "defaultValue": "Basic",
+            "label": "Database Edition",
+            "name": "dbEdition",
+            "toolTip": "Edition of Database to use",
+            "type": "Microsoft.Common.DropDown",
             "visible": true
           }
-        ]
+        ],
+        "label": "Database Configuration",
+        "name": "databaseConfig",
+        "subLabel": {
+          "postValidation": "Done",
+          "preValidation": "Configure the Database"
+        }
       },
       {
-        "name": "storageConfig",
-        "label": "Storage settings",
-        "subLabel": {
-          "preValidation": "Configure the infrastructure settings",
-          "postValidation": "Done"
-        },
         "bladeTitle": "Storage settings",
         "elements": [
           {
-            "name": "storageAccountsType",
-            "type": "Microsoft.Common.DropDown",
-            "label": "Storage account type",
-            "defaultValue": "Standard_LRS",
-            "toolTip": "Storage account type",
             "constraints": {
               "allowedValues": [
                 {
@@ -304,29 +311,22 @@
               ],
               "required": true
             },
+            "defaultValue": "Standard_LRS",
+            "label": "Storage account type",
+            "name": "storageAccountsType",
+            "toolTip": "Storage account type",
+            "type": "Microsoft.Common.DropDown",
             "visible": true
           }
-        ]
+        ],
+        "label": "Storage settings",
+        "name": "storageConfig",
+        "subLabel": {
+          "postValidation": "Done",
+          "preValidation": "Configure the infrastructure settings"
+        }
       }
-    ],
-    "outputs": {
-      "clusterName": "[steps('clusterConfig').clusterName]",
-      "vmSku": "[steps('clusterConfig').vmSku]",
-      "location": "[location()]",
-      "artifactoryVersion": "[steps('clusterConfig').artifactoryVersion]",
-      "masterKey": "[steps('clusterConfig').masterKey]",
-      "certificate": "[steps('clusterConfig').certificate]",
-      "certificateKey": "[steps('clusterConfig').certificateKey]",
-      "certificateDomain": "[steps('clusterConfig').certificateDomain]",
-      "artifactoryServerName": "[steps('clusterConfig').artifactoryServerName]",
-      "extraJavaOptions": "[steps('clusterConfig').extraJavaOptions]",
-      "adminUsername": "[steps('vmCredentials').adminUsername]",
-      "adminPassword": "[steps('vmCredentials').adminPassword.password]",
-      "DB_Admin_User": "[steps('databaseConfig').dbAdminUsername]",
-      "DB_Admin_Password": "[steps('databaseConfig').dbAdminPassword]",
-      "DB_Name": "[steps('databaseConfig').dbName]",
-      "DB_Edition": "[steps('databaseConfig').dbEdition]",
-      "storageAccountType": "[steps('storageConfig').storageAccountsType]"
-    }
-  }
+    ]
+  },
+  "version": "0.1.2-preview"
 }

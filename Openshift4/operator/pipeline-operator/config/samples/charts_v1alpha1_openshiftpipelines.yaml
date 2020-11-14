@@ -288,7 +288,7 @@ spec:
               url: ""
               username: ""
               password: ""
-  
+
           ## Router configuration
           ##
           router:
@@ -296,10 +296,10 @@ spec:
             accessPort: {{ .Values.pipelines.router.internalPort }}
             dataPort: {{ .Values.pipelines.router.externalPort }}
             joinKey: "{{ .Values.pipelines.joinKey }}"
-  
+
           security:
             masterKey: "{{ .Values.pipelines.masterKey }}"
-  
+
           ## Database configuration
           ##
           db:
@@ -325,7 +325,7 @@ spec:
             {{- else }}
             connectionString: "{{ tpl (printf "postgres://%s:%s@%v:%v/%s" .Values.global.postgresql.user .Values.global.postgresql.password .Values.global.postgresql.host .Values.global.postgresql.port .Values.global.postgresql.database) . }}"
             {{- end }}
-  
+
           ## RabbitMQ configuration
           ##
           msg:
@@ -389,7 +389,7 @@ spec:
               username: {{ .Values.rabbitmq.build_username }}
               password: {{ .Values.rabbitmq.build_password }}
             {{- end }}
-  
+
           ## Vault configuration
           ##
           vault:
@@ -408,14 +408,14 @@ spec:
               - ""
               - ""
               - ""
-  
+
           ## Redis configuration
           ##
           redis:
             ip: {{ .Release.Name }}-redis-master
             port: 6379
             clusterEnabled: false
-  
+
         ## This section is used for bringing up the core services and setting up
         ## configurations required by the installer & the services
         ##
@@ -452,7 +452,7 @@ spec:
             noProxy: ""
             username: ""
             password: ""
-  
+
           ## Mailserver settings
           ##
           mailserver:
@@ -472,7 +472,7 @@ spec:
           allowCallHome: true
           serviceInstanceHealthCheckIntervalInMins: 1
           serviceInstanceStatsCutOffIntervalInHours: 24
-  
+
           ## Service configuration
           ##
           services:
@@ -521,7 +521,7 @@ spec:
               name: marshaller
             extensionSync:
               name: extensionSync
-  
+
         ## Runtime configuration
         ##
         runtime:
@@ -1287,5 +1287,3 @@ spec:
         type: ClusterIP
       tolerations: []
       updateStrategy: RollingUpdate
-  
-  

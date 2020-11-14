@@ -31,7 +31,7 @@ pipelines:
         # nginx.ingress.kubernetes.io/whitelist-source-range: "1.2.3.4/32,2.3.4.5/32"
       path: /
       hosts:
-        - pipelines-api.example.com    
+        - pipelines-api.example.com
       tls:
         - secretName: pipelines-api.example.com
           hosts:
@@ -59,7 +59,7 @@ pipelines:
         # nginx.ingress.kubernetes.io/whitelist-source-range: "1.2.3.4/32,2.3.4.5/32"
       path: /
       hosts:
-        - pipelines.example.com    
+        - pipelines.example.com
       tls:
         - secretName: pipelines.example.com
           hosts:
@@ -70,7 +70,7 @@ rabbitmq:
 
   ingress:
     enabled: true
-    
+
     hostName: pipelines-msg.example.com
     path: /
     tls: true
@@ -81,7 +81,7 @@ rabbitmq:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
       kubernetes.io/tls-acme: "true"
       ## If NOT using letsencrypt, you can omit two lines above
-      
+
       ingress.kubernetes.io/force-ssl-redirect: "true"
       ingress.kubernetes.io/proxy-body-size: "0"
       ingress.kubernetes.io/proxy-read-timeout: "600"

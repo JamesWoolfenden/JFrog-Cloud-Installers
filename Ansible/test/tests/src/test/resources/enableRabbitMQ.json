@@ -1,11 +1,11 @@
 {
-  "sslInsecure": false,
-  "maxDiskDataUsage": 80,
-  "monitorSamplingInterval": 300,
-  "mailNoSsl": false,
-  "messageMaxTTL": 7,
-  "jobInterval": 86400,
   "allowSendingAnalytics": true,
+  "enableTlsConnectionToRabbitMQ": true,
   "httpsPort": 443,
-  "enableTlsConnectionToRabbitMQ": true
+  "jobInterval": 86400,
+  "mailNoSsl": false,
+  "maxDiskDataUsage": 80,
+  "messageMaxTTL": 7,
+  "monitorSamplingInterval": 300,
+  "sslInsecure": false
 }

@@ -60,4 +60,3 @@ task unified_test(type: Test) {
         showStandardStreams = true
     }
 }
-

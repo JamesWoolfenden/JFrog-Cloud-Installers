@@ -1,99 +1,98 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "location": {
-            "value": "westus2"
-        },
-        "networkInterfaceName": {
-            "value": "xray-nic"
-        },
-        "networkSecurityGroupName": {
-            "value": "xray-nsg"
-        },
-        "networkSecurityGroupRules": {
-            "value": [
-                {
-                    "name": "SSH",
-                    "properties": {
-                        "priority": 300,
-                        "protocol": "TCP",
-                        "access": "Allow",
-                        "direction": "Inbound",
-                        "sourceAddressPrefix": "*",
-                        "sourcePortRange": "*",
-                        "destinationAddressPrefix": "*",
-                        "destinationPortRange": "22"
-                    }
-                }
-            ]
-        },
-        "subnetName": {
-            "value": "default"
-        },
-        "virtualNetworkName": {
-            "value": "xray-vm-test-vnet"
-        },
-        "addressPrefixes": {
-            "value": [
-                "10.0.0.0/24"
-            ]
-        },
-        "subnets": {
-            "value": [
-                {
-                    "name": "default",
-                    "properties": {
-                        "addressPrefix": "10.0.0.0/24"
-                    }
-                }
-            ]
-        },
-        "publicIpAddressName": {
-            "value": "xray-public-ip"
-        },
-        "publicIpAddressType": {
-            "value": "Dynamic"
-        },
-        "publicIpAddressSku": {
-            "value": "Basic"
-        },
-        "virtualMachineName": {
-            "value": "xray-vm"
-        },
-        "virtualMachineComputerName": {
-            "value": "xrayvm"
-        },
-        "storageAccountName": {
-            "value": "mpstoragevhd"
-        },
-        "virtualMachineSize": {
-            "value": "Standard_B4ms"
-        },
-
-        "diagnosticsStorageAccountName": {
-            "value": "xrayvmvmtestdiag"
-        },
-        "diagnosticsStorageAccountId": {
-            "value": "Microsoft.Storage/storageAccounts/xrayvmvmtestdiag"
-        },
-        "diagnosticsStorageAccountType": {
-            "value": "Standard_LRS"
-        },
-        "diagnosticsStorageAccountKind": {
-            "value": "Storage"
-        },
-        "adminUsername": {
-            "value": "vmuser"
-        },
-        "adminPassword": {
-            "value": "OWERWRITE_THE_PASSWORD"
-        },
-        "xrayVersion": {
-            "value": "3.9.1"
-        },
-        "scriptName": {
-            "value": "install_xray_to_vm.sh"
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "addressPrefixes": {
+      "value": [
+        "10.0.0.0/24"
+      ]
+    },
+    "adminPassword": {
+      "value": "OWERWRITE_THE_PASSWORD"
+    },
+    "adminUsername": {
+      "value": "vmuser"
+    },
+    "diagnosticsStorageAccountId": {
+      "value": "Microsoft.Storage/storageAccounts/xrayvmvmtestdiag"
+    },
+    "diagnosticsStorageAccountKind": {
+      "value": "Storage"
+    },
+    "diagnosticsStorageAccountName": {
+      "value": "xrayvmvmtestdiag"
+    },
+    "diagnosticsStorageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "location": {
+      "value": "westus2"
+    },
+    "networkInterfaceName": {
+      "value": "xray-nic"
+    },
+    "networkSecurityGroupName": {
+      "value": "xray-nsg"
+    },
+    "networkSecurityGroupRules": {
+      "value": [
+        {
+          "name": "SSH",
+          "properties": {
+            "access": "Allow",
+            "destinationAddressPrefix": "*",
+            "destinationPortRange": "22",
+            "direction": "Inbound",
+            "priority": 300,
+            "protocol": "TCP",
+            "sourceAddressPrefix": "*",
+            "sourcePortRange": "*"
+          }
         }
+      ]
+    },
+    "publicIpAddressName": {
+      "value": "xray-public-ip"
+    },
+    "publicIpAddressSku": {
+      "value": "Basic"
+    },
+    "publicIpAddressType": {
+      "value": "Dynamic"
+    },
+    "scriptName": {
+      "value": "install_xray_to_vm.sh"
+    },
+    "storageAccountName": {
+      "value": "mpstoragevhd"
+    },
+    "subnetName": {
+      "value": "default"
+    },
+    "subnets": {
+      "value": [
+        {
+          "name": "default",
+          "properties": {
+            "addressPrefix": "10.0.0.0/24"
+          }
+        }
+      ]
+    },
+    "virtualMachineComputerName": {
+      "value": "xrayvm"
+    },
+    "virtualMachineName": {
+      "value": "xray-vm"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_B4ms"
+    },
+    "virtualNetworkName": {
+      "value": "xray-vm-test-vnet"
+    },
+    "xrayVersion": {
+      "value": "3.9.1"
     }
+  }
 }

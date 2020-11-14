@@ -1,15 +1,15 @@
 # JFrog Ansible Installers Collection
 
 This Ansible directory consists of the following directories that support the JFrog Ansible collection.
- 
+
  * [ansible_collections directory](ansible_collections) - This directory contains the Ansible collection package that has the Ansible roles for Artifactory and Xray. See the collection [README](ansible_collections/README.md) for details on the available roles and variables.
  * [examples directory](examples) - This directory contains example playbooks for various architectures from single Artifactory (RT) deployments to high-availability setups.
  * [infra directory](infra) - This directory contains example infrastructure templates that can be used for testing and as example deployments.
  * [test directory](test) - This directory contains Gradle tests that can be used to verify a deployment. It also has Ansible playbooks for creating infrastructure, provisioning software and testing with Gradle.
- 
+
  ## Tested Artifactory and Xray Versions
  The following versions of Artifactory and Xray have been validated with this collection. Other versions and combinations may also work.
- 
+
 | collection_version | artifactory_version | xray_version |
 |--------------------|---------------------|--------------|
 | 1.1.2              | 7.10.2              | 3.10.3       |
@@ -22,17 +22,17 @@ This Ansible directory consists of the following directories that support the JF
 | 1.0.7              | 7.6.1               | 3.5.2        |
 | 1.0.6              | 7.5.0               | 3.3.0        |
 | 1.0.6              | 7.4.3               | 3.3.0        |
- 
+
  ## Getting Started
- 
+
  1. Install this collection from Ansible Galaxy. This collection is also available in RedHat Automation Hub.
-    
+
     ```
     ansible-galaxy collection install jfrog.installers
     ```
-        
+
     Ensure you reference the collection in your playbook when using these roles.
-        
+
     ```
     ---
     - hosts: xray
@@ -40,17 +40,17 @@ This Ansible directory consists of the following directories that support the JF
         - jfrog.installers
       roles:
         - xray
-    
+
     ```
-    
- 2. Ansible uses SSH to connect to hosts. Ensure that your SSH private key is on your client and the public keys are installed on your Ansible hosts. 
- 
+
+ 2. Ansible uses SSH to connect to hosts. Ensure that your SSH private key is on your client and the public keys are installed on your Ansible hosts.
+
  3. Create your inventory file. Use one of the examples from the [examples directory](examples) to construct an inventory file (hosts.yml) with the host addresses and variables.
- 
+
  4. Create your playbook. Use one of the examples from the [examples directory](examples) to construct a playbook using the JFrog Ansible roles. These roles will be applied to your inventory and provision software.
- 
+
  5. Then execute with the following command to provision the JFrog software with Ansible. Variables can also be passed in at the command-line.
- 
+
 ```
 ansible-playbook -i hosts.yml playbook.yml --extra-vars "master_key=$(openssl rand -hex 32) join_key=$(openssl rand -hex 32)"
 ```

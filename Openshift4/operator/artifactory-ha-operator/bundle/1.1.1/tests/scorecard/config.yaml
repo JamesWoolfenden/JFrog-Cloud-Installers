@@ -40,4 +40,3 @@ stages:
     labels:
       suite: olm
       test: olm-spec-descriptors-test
-
