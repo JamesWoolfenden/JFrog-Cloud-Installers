@@ -1,3 +1,6 @@
+.terraform/
+terraform.tfstate
+*.backup
 .molecule
 *.log
 *.swp
@@ -5,4 +8,5 @@
 ./idea
 .idea/
 .DS_Store
-
+id_rsa
+*.pub
